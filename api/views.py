@@ -120,11 +120,9 @@ def signup(request):
     return Response(return_data)
 
 @api_view(["POST"])
-# @autentication.token_required
 def verify(request):
     try:
         code = request.data.get('code',None)
-        # user_id = decrypedToken['user_id']
         user_id = request.data.get('user_id',None)
 
         reg_field = [user_id, code]
@@ -140,12 +138,12 @@ def verify(request):
                     "message": "Your Account is now Validated!"
                 }
             
-        else:
-            return_data = {
-                "success": False,
-                "status" : 201,
-                "message": "Invalid Parameter"
-            }
+        # else:
+        #     return_data = {
+        #         "success": False,
+        #         "status" : 201,
+        #         "message": "Invalid Parameter"
+        #     }
     except Exception as e:
         return_data = {
             "success": False,
