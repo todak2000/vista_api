@@ -119,12 +119,12 @@ def signup(request):
         }
     return Response(return_data)
 
-@api_view(["GET"])
+@api_view(["POST"])
 @autentication.token_required
 def verify(request,decrypedToken):
     try:
         code = request.data.get('code',None)
-        user_id = decrypedToken['user_id']
+        user_id = request.data.get('user_id',None)
         if user_id != None and user_id != '':
             #get user info
             user_data = User.objects.get(user_id=decrypedToken["user_id"])
