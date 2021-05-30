@@ -120,16 +120,17 @@ def signup(request):
     return Response(return_data)
 
 @api_view(["POST"])
-@autentication.token_required
-def verify(request,decrypedToken):
+# @autentication.token_required
+def verify(request):
     try:
         code = request.data.get('code',None)
-        user_id = decrypedToken['user_id']
-        # user_id = request.data.get('user_id',None)
+        # user_id = decrypedToken['user_id']
+        user_id = request.data.get('user_id',None)
 
-        if user_id != None and user_id != '':
+        reg_field = [user_id, code]
+        if not None in reg_field and not "" in reg_field:
             #get user info
-            user_data = User.objects.get(user_id=decrypedToken["user_id"])
+            user_data = User.objects.get(user_id=user_id)
             otpData = otp.objects.get(user=user_data)
             if otpData.otp_code == code:
                 otpData.validated = True

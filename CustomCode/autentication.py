@@ -13,25 +13,25 @@ def token_required(something):
                     return something(request,data)
                 except jwt.exceptions.ExpiredSignatureError:
                     return_data = {
-                        "error": "1",
+                        "success": False,
                         "message": "Token has expired"
                         }
                     return Response(return_data, status=status.HTTP_401_UNAUTHORIZED)
                 except Exception as e:
                     return_data = {
-                        "error": "1",
+                        "success": False,
                         "message": str(e)
                     }
                     return Response(return_data, status=status.HTTP_401_UNAUTHORIZED)
             else:
                 return_data = {
-                    "error" : "2",
+                    "success": False,
                     "message" : "Token required",
                     }
                 return Response(return_data, status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return_data = {
-                "error" : "3",
+                "success": False,
                 "message" : str(e)
                 }
             return Response(return_data, status=status.HTTP_401_UNAUTHORIZED)
