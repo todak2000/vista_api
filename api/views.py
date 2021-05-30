@@ -91,8 +91,8 @@ def signup(request):
                     'text': 'Hello, '+firstName+'!\nKindly use the Verification Code below to activate your Vista Account',
                     'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
                     'to': [
-                        {'name': firstName, 'email': "todak2000@gmail.com"}
-                        # {'name': firstName, 'email': email}
+                        # {'name': firstName, 'email': "todak2000@gmail.com"}
+                        {'name': firstName, 'email': email}
                     ]
                 }
                 sentMail = SPApiProxy.smtp_send_mail(email)
@@ -149,5 +149,52 @@ def verify(request):
             "success": False,
             "status" : 202,
             "message": str(e)
+        }
+    return Response(return_data)
+
+# RESEND VERIFICATION CODE API
+@api_view(["POST"])
+def resend_code(request):
+    try:
+        user_id= request.data.get('user_id',None)
+        if not None in user_id and not "" in user_id:
+            if User.objects.filter(user_id =user_id).exists():
+                getOtp = otp.objects.get(user__user_id = user_id)
+
+                userData = User.objects.get(user_id = user_id)
+                firstName = userData.firstname
+                code = getOtp.otp_code
+                if code:
+                    # Resend mail using SMTP
+                    mail_subject = 'Activate Code Sent again for your Vista account.'
+                    resentEmail = {
+                        'subject': mail_subject,
+                        'html': '<h4>Hello, '+firstName+'!</h4><p>Kindly find the Verification Code below sent again to activate your Fida Account</p> <h1>'+code+'</h1>',
+                        'text': 'Hello, '+firstName+'!\nKindly find the Verification Code below sent againto activate your Fida Account',
+                        'from': {'name': 'Fida Synergy', 'email': 'donotreply@wastecoin.co'},
+                        'to': [
+                            {'name': firstName, 'email': userData.email}
+                        ]
+                    }
+                    SPApiProxy.smtp_send_mail(resentEmail)
+                    return_data = {
+                        "error": False,
+                        "message": "Verfication Code sent again!"
+                    }
+                else:
+                    return_data = {
+                        "error": False,
+                        "message": "We could not retrieve your Verification Code. Kindly register!"
+                    }
+        else:
+            return_data = {
+                "error":True,
+                "message": "An error occured. Try again later"
+            }
+    except Exception as e:
+        return_data = {
+            "error": True,
+            "message": str(e)
+            # "message": "Something went wrong!"
         }
     return Response(return_data)
