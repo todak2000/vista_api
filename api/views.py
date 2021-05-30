@@ -138,12 +138,12 @@ def verify(request):
                     "message": "Your Account is now Validated!"
                 }
             
-        # else:
-        #     return_data = {
-        #         "success": False,
-        #         "status" : 201,
-        #         "message": "Invalid Parameter"
-        #     }
+        else:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": "Wrong Code Entered. Try again!"
+            }
     except Exception as e:
         return_data = {
             "success": False,
