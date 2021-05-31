@@ -100,8 +100,8 @@ def signup(request):
                     return_data = {
                         "success": True,
                         "status" : 200,
-                        "user_id": userRandomId,
                         "message": "The registration was successful.",
+                        "user_id": userRandomId,
                         "token": f"{token.decode('UTF-8')}",
                         "elapsed_time": f"{timeLimit}",
                         }
@@ -371,5 +371,86 @@ def change_password(request):
             "status" : 202,
             "message": str(e)
             # "message": 'Sorry, Something went wrong!'
+        }
+    return Response(return_data)
+
+#SIGNIN API
+@api_view(["POST"])
+def signin(request):
+    try:
+        email = request.data.get("email",None)
+        password = request.data.get("password",None)
+        field = [email,password]
+        if not None in field and not '' in field:
+            validate_mail = validator.checkmail(email)
+            if validate_mail == True:
+                if User.objects.filter(email =email).exists() == False:
+                    return_data = {
+                        "success": False,
+                        "status" : 202,
+                        "message": "User does not exist"
+                    }
+                else:
+                    user_data = User.objects.get(email=email)
+                    is_valid_password = password_functions.check_password_match(password,user_data.password)
+                    is_verified = otp.objects.get(user__phone=user_data.phone).validated
+                    #Generate token
+                    timeLimit= datetime.datetime.utcnow() + datetime.timedelta(minutes=1440) #set limit for user
+                    payload = {"user_id": f'{user_data.user_id}',
+                               "validated": is_verified,
+                               "exp":timeLimit}
+                    token = jwt.encode(payload,settings.SECRET_KEY)
+                    if is_valid_password and is_verified:
+                        return_data = {
+                            "success": True,
+                            "status" : 200,
+                            "message": "Successfull",
+                            "token": token.decode('UTF-8'),
+                            "token-expiration": f"{timeLimit}",
+                            "user_details": 
+                                {
+                                    "firstname": f"{user_data.firstname}",
+                                    "lastname": f"{user_data.lastname}",
+                                    "email": f"{user_data.email}",
+                                    "phonenumber": f"{user_data.user_phone}",
+                                    "address": f"{user_data.user_address}"
+                                }
+                        }
+                        return Response(return_data)
+                    elif is_verified == False:
+                        return_data = {
+                            "success": False,
+                            "user_id": user_data.user_id,
+                            "message": "User is not verified",
+                            "status" : 205,
+                            "token": token.decode('UTF-8')
+                        }
+                        return Response(return_data)
+                    else:
+                        return_data = {
+                            "success": False,
+                            "status" : 200,
+                            "message" : "Wrong Password"
+                        }
+                        return Response(return_data)
+            else:
+                return_data = {
+                    "success": True,
+                    "status" : 200,
+                    "message": "Email is Invalid"
+                }
+                return Response(return_data)
+        else:
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message" : "Invalid Parameters"
+            }
+            return Response(return_data)
+    except Exception as e:
+        return_data = {
+            "success": True,
+            "status" : 200,
+            "message": str(e)
         }
     return Response(return_data)
