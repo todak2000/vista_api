@@ -169,31 +169,35 @@ def resend_code(request):
                     mail_subject = 'Activate Code Sent again for your Vista account.'
                     resentEmail = {
                         'subject': mail_subject,
-                        'html': '<h4>Hello, '+firstName+'!</h4><p>Kindly find the Verification Code below sent again to activate your Fida Account</p> <h1>'+code+'</h1>',
-                        'text': 'Hello, '+firstName+'!\nKindly find the Verification Code below sent againto activate your Fida Account',
-                        'from': {'name': 'Fida Synergy', 'email': 'donotreply@wastecoin.co'},
+                        'html': '<h4>Hello, '+firstName+'!</h4><p>Kindly find the Verification Code below sent again to activate your Vista Account</p> <h1>'+code+'</h1>',
+                        'text': 'Hello, '+firstName+'!\nKindly find the Verification Code below sent againto activate your Vista Account',
+                        'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
                         'to': [
                             {'name': firstName, 'email': userData.email}
                         ]
                     }
                     SPApiProxy.smtp_send_mail(resentEmail)
                     return_data = {
-                        "error": False,
+                        "success": True,
+                        "status" : 200,
                         "message": "Verfication Code sent again!"
                     }
                 else:
                     return_data = {
-                        "error": False,
+                        "success": False,
+                        "status" : 202,
                         "message": "We could not retrieve your Verification Code. Kindly register!"
                     }
         else:
             return_data = {
-                "error":True,
+                "success": False,
+                "status" : 202,
                 "message": "An error occured. Try again later"
             }
     except Exception as e:
         return_data = {
-            "error": True,
+            "success": False,
+            "status" : 202,
             "message": str(e)
             # "message": "Something went wrong!"
         }
