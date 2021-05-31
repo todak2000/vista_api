@@ -182,18 +182,21 @@ def resend_code(request):
                         "status" : 200,
                         "message": "Verfication Code sent again!"
                     }
+                    return Response(return_data)
                 else:
                     return_data = {
                         "success": False,
                         "status" : 202,
                         "message": "We could not retrieve your Verification Code. Kindly register!"
                     }
+                    return Response(return_data)
         else:
             return_data = {
                 "success": False,
                 "status" : 202,
                 "message": "An error occured. Try again later"
             }
+            return Response(return_data)
     except Exception as e:
         return_data = {
             "success": False,
