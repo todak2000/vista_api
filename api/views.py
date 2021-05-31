@@ -214,3 +214,162 @@ def resend_code(request):
             # "message": "Something went wrong!"
         }
     return Response(return_data)
+
+# SEND PASSWORD LINK (FOROGT PASSWORD PAGE) API
+@api_view(["POST"])
+def forgot_password(request):
+    try:
+        email = request.data.get('email',None)
+        field = [email]
+        if not None in field and not "" in field:
+            if User.objects.filter(email =email).exists():
+                
+                getOtp = otp.objects.get(user__email = email)
+                userData = User.objects.get(email = email)
+                firstName = userData.firstname
+                #Generate reset OTP
+                resetCode = string_generator.numeric(4)
+                #Save reset OTP
+                getOtp.password_reset_code=resetCode
+                getOtp.save()
+
+                if getOtp:
+                    # Resend mail using SMTP
+                    mail_subject = 'Reset your Vista account Password Confirmation.'
+                    resentEmail = {
+                        'subject': mail_subject,
+                        'html': '<h4>Hi, '+firstName+'!</h4><p>Kindly find the Reset Code below to confirm that intend to change your Vista Account Password</p> <h1>'+userResetCode.password_reset_code+'</h1>',
+                        'text': 'Hello, '+firstName+'!\nKindly find the Reset Code below to confirm that intend to change your Vista Account Password',
+                        'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                        'to': [
+                            {'name': firstName, 'email': email}
+                        ]
+                    }
+                    SPApiProxy.smtp_send_mail(resentEmail)
+                    return_data = {
+                        "success": True,
+                        "status" : 200,
+                        "user_id": userData.user_id,
+                        "message": "Reset Code sent!"
+                    }
+                    return Response(return_data)
+                else:
+                    return_data = {
+                        "success": False,
+                        "status" : 202,
+                        "message": "Sorry! try again"
+                    }
+                    return Response(return_data)
+            elif validator.checkmail(email) == False:
+                return_data = {
+                    "success": False,
+                    "status" : 202,
+                    "message": "Email is Invalid"
+                }
+                return Response(return_data)
+            else:
+                return_data = {
+                    "success": False,
+                    "status" : 202,
+                    "message": "Email does not exist in our database"
+                }
+                return Response(return_data)
+        else:
+            return_data = {
+                "success": False,
+                "status" : 202,
+                "message": "One or more fields is empty!"
+            }
+            return Response(return_data)
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 202,
+            "message": str(e)
+            # "message": "Something went wrong!"
+        }
+    return Response(return_data)
+
+# CONFIRM USER FOR PASSWORD CHANGE
+@api_view(["POST"])
+def confirm_user_password(request):
+    try:
+        code = request.data.get('code',None)
+        user_id = request.data.get('user_id',None)
+        field = [user_id, code]
+        if not None in field and not "" in field:
+            getOtp = otp.objects.get(password_reset_code=code)
+            if getOtp.user.user_id == user_id:
+                return_data = {
+                    "success": True,
+                    "status" : 200,
+                    "user_id": user_id,
+                    "message": "User Confirmed!"
+                }
+                return Response(return_data)
+            else:
+                return_data = {
+                    "success": False,
+                    "status" : 202,
+                    "message": "Sorry! try again"
+                }
+                return Response(return_data)
+        else:
+            return_data = {
+                "success": False,
+                "status" : 202,
+                "message": "One or more fields is empty!"
+            }
+            return Response(return_data)
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 202,
+            "message": str(e)
+            # "message": "Something went wrong!"
+        }
+    return Response(return_data)
+
+
+# CHANGE PASSWORD API
+@api_view(["POST"])
+def change_password(request):
+    try:
+        user_id = request.data.get("user_id",None)
+        new_password = request.data.get("password",None)
+        confirm_new_password = request.data.get("confirm_password",None)
+        user_data = User.objects.get(user_id=user_id)  
+        
+        if user_data:
+            if new_password != confirm_new_password:
+                return_data = {
+                    "success": False,
+                    "status" : 202,
+                    "message": "Password do not match!"
+                }
+                return Response(return_data)
+            else:
+                encryptpassword = password_functions.generate_password_hash(new_password)
+                user_data.user_password = encryptpassword
+                user_data.save()
+                return_data = {
+                    "success": True,
+                    "status" : 200,
+                    "message": "Password Changed Successfully! Kindly login"
+                }
+                return Response(return_data)
+        else:
+            return_data = {
+                "success": False,
+                "status" : 202,
+                "message": 'Sorry, You are not Authorized to access this link!'
+            }
+            return Response(return_data)
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 202,
+            "message": str(e)
+            # "message": 'Sorry, Something went wrong!'
+        }
+    return Response(return_data)
