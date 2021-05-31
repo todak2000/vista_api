@@ -134,16 +134,24 @@ def verify(request):
                 otpData.validated = True
                 return_data = {
                     "success": True,
-                    "status" : 201,
+                    "status" : 200,
                     "message": "Your Account is now Validated!"
                 }
-            
+                return Response(return_data)
+            else:
+                return_data = {
+                    "success": False,
+                    "status" : 201,
+                    "message": "Wrong Code Entered. Try again!"
+                }
+                return Response(return_data)
         else:
             return_data = {
                 "success": False,
                 "status" : 201,
-                "message": "Wrong Code Entered. Try again!"
+                "message": "Kindly enter the codes sent to your email"
             }
+            return Response(return_data)
     except Exception as e:
         return_data = {
             "success": False,
@@ -157,7 +165,8 @@ def verify(request):
 def resend_code(request):
     try:
         user_id= request.data.get('user_id',None)
-        if not None in user_id and not "" in user_id:
+        field = [user_id]
+        if not None in field and not "" in field:
             if User.objects.filter(user_id =user_id).exists():
                 getOtp = otp.objects.get(user__user_id = user_id)
 
