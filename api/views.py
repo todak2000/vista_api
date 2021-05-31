@@ -238,7 +238,7 @@ def forgot_password(request):
                     mail_subject = 'Reset your Vista account Password Confirmation.'
                     resentEmail = {
                         'subject': mail_subject,
-                        'html': '<h4>Hi, '+firstName+'!</h4><p>Kindly find the Reset Code below to confirm that intend to change your Vista Account Password</p> <h1>'+userResetCode.password_reset_code+'</h1>',
+                        'html': '<h4>Hi, '+firstName+'!</h4><p>Kindly find the Reset Code below to confirm that intend to change your Vista Account Password</p> <h1>'+getOtp.password_reset_code+'</h1>',
                         'text': 'Hello, '+firstName+'!\nKindly find the Reset Code below to confirm that intend to change your Vista Account Password',
                         'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
                         'to': [
