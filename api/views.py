@@ -419,6 +419,20 @@ def signin(request):
                         }
                         return Response(return_data)
                     elif is_verified == False:
+                        getOtp = otp.objects.get(user_data__user_id = user_data.user_id)
+                        code = getOtp.otp_code
+                        # Resend mail using SMTP
+                        mail_subject = 'Activate Code Sent again for your Vista account.'
+                        resentEmail = {
+                            'subject': mail_subject,
+                            'html': '<h4>Hello, '+user_data.firstname+'!</h4><p>Kindly find the Verification Code below sent again to activate your Vista Account</p> <h1>'+code+'</h1>',
+                            'text': 'Hello, '+user_data.firstname+'!\nKindly find the Verification Code below sent againto activate your Vista Account',
+                            'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                            'to': [
+                                {'name': user_data.firstname, 'email': user_data.email}
+                            ]
+                        }
+                        SPApiProxy.smtp_send_mail(resentEmail)
                         return_data = {
                             "success": False,
                             "user_id": user_data.user_id,
