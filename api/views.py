@@ -436,7 +436,7 @@ def signin(request):
                         return_data = {
                             "success": False,
                             "user_id": user_data.user_id,
-                            "message": "User is not verified",
+                            "message": "You are not a verified User. Kindly do so now!",
                             "status" : 205,
                             "token": token.decode('UTF-8')
                         }
