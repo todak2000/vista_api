@@ -8,6 +8,7 @@ def token_required(something):
         try:
             if request.GET.get('token') != '' and request.GET.get('token') != None:
                 token_passed = request.GET.get('token')
+                # token_passed = token
                 try:
                     data = jwt.decode(token_passed,settings.SECRET_KEY, algorithms=['HS256'])
                     return something(request,data)
