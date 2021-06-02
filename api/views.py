@@ -458,3 +458,44 @@ def signin(request):
             "message": str(e)
         }
     return Response(return_data)
+
+@api_view(["GET"])
+@autentication.token_required
+def dashboard(request,decrypedToken):
+    try:
+        user_id = decrypedToken['user_id']
+        if user_id != None and user_id != '':
+            #get user info
+            user_data = User.objects.get(user_id=decrypedToken["user_id"])
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": "Successfull",
+                # "token": token.decode('UTF-8'),
+                # "token-expiration": f"{timeLimit}",
+                # "user_id": user_data.user_id,
+                "user_details": 
+                    {
+                        "firstname": f"{user_data.firstname}",
+                        "lastname": f"{user_data.lastname}",
+                        "email": f"{user_data.email}",
+                        "phonenumber": f"{user_data.phone}",
+                        "address": f"{user_data.address}",
+                        "state": f"{user_data.state}",
+                        "role": f"{user_data.role}",
+                    }
+            }
+        else:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": "Invalid Parameter"
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
+
