@@ -414,8 +414,9 @@ def signin(request):
                                     "firstname": f"{user_data.firstname}",
                                     "lastname": f"{user_data.lastname}",
                                     "email": f"{user_data.email}",
-                                    "phonenumber": f"{user_data.user_phone}",
-                                    "address": f"{user_data.user_address}"
+                                    "phonenumber": f"{user_data.phone}",
+                                    "address": f"{user_data.address}",
+                                    "role": f"{user_data.role}",
                                 }
                         }
                         return Response(return_data)
