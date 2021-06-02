@@ -11,4 +11,5 @@ urlpatterns = [
     path('api/v1/forgot_password',views.forgot_password),
     path('api/v1/confirm_user_password',views.confirm_user_password),
     path('api/v1/change_password',views.change_password),
+    path('api/v1/dashboard',views.change_password),
 ]
