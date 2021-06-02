@@ -416,6 +416,7 @@ def signin(request):
                                     "email": f"{user_data.email}",
                                     "phonenumber": f"{user_data.phone}",
                                     "address": f"{user_data.address}",
+                                    "state": f"{user_data.state}",
                                     "role": f"{user_data.role}",
                                 }
                         }
