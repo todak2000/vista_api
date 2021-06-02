@@ -132,6 +132,7 @@ def verify(request):
             otpData = otp.objects.get(user=user_data)
             if otpData.otp_code == code:
                 otpData.validated = True
+                otpData.save()
                 return_data = {
                     "success": True,
                     "status" : 200,
