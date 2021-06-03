@@ -481,6 +481,7 @@ def dashboard(request,decrypedToken):
                         "address": f"{user_data.address}",
                         "state": f"{user_data.state}",
                         "role": f"{user_data.role}",
+                        "balance": f"{user_data.walletBalance}",
                     }
             }
         else:
