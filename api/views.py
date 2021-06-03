@@ -410,6 +410,7 @@ def signin(request):
                             "token": token.decode('UTF-8'),
                             "token-expiration": f"{timeLimit}",
                             "user_id": user_data.user_id,
+                            "role": f"{user_data.role}",
                             # "user_details": 
                             #     {
                             #         "firstname": f"{user_data.firstname}",
