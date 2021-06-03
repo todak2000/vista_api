@@ -136,6 +136,7 @@ def verify(request):
                 return_data = {
                     "success": True,
                     "status" : 200,
+                    "role" : user_data.role,
                     "message": "Your Account is now Validated!"
                 }
                 return Response(return_data)
@@ -471,9 +472,6 @@ def dashboard(request,decrypedToken):
                 "success": True,
                 "status" : 200,
                 "message": "Successfull",
-                # "token": token.decode('UTF-8'),
-                # "token-expiration": f"{timeLimit}",
-                # "user_id": user_data.user_id,
                 "user_details": 
                     {
                         "firstname": f"{user_data.firstname}",
