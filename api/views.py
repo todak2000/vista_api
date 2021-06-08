@@ -539,3 +539,107 @@ def profile(request,decrypedToken):
             "message": str(e)
         }
     return Response(return_data)
+
+# EDIT BIO API
+@api_view(["PUT"])
+def edit_bio(request):
+    try:
+        user_phone = request.data.get("phone",None)
+        new_state = request.data.get("state",None)
+        new_address = request.data.get("address",None)
+        user_data = User.objects.get(phone=user_phone)  
+        
+        field = [new_state,new_address]
+        if not None in field and not "" in field:
+            user_data.address = new_address
+            user_data.state = new_state
+            user_data.save()
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": "Bio-Data  Updated Successfully!",
+            }
+        else:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": "One or more fields is Empty!"
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
+
+# UPDATE PASSWORD API
+@api_view(["PUT"])
+def edit_password(request):
+    
+    try:
+        user_phone = request.data.get("phone",None)
+        old_password = request.data.get("old_password",None)
+        new_password = request.data.get("new_password",None)
+        field = [old_password,new_password]
+        user_data = User.objects.get(phone=user_phone)
+        if not None in field and not "" in field:
+            is_valid_password = password_functions.check_password_match(old_password,user_data.password)
+            if is_valid_password == False:
+                return_data = {
+                    "success": False,
+                    "status" : 201,
+                    "message": "Old Password is Incorrect"
+                }
+            else:
+                #decrypt password
+                encryptpassword = password_functions.generate_password_hash(new_password)
+                user_data.password = encryptpassword
+                user_data.save()
+                return_data = {
+                    "success": True,
+                    "status" : 200,
+                    "message": "Password Changed Successfully! "
+                }
+    except Exception as e:
+        return_data = {
+                "success": False,
+                "status" : 201,
+                "message": str(e)
+        }
+    return Response(return_data)
+
+# EDIT ACCOUNT API
+@api_view(["PUT"])
+def edit_account(request):
+    try:
+        user_phone = request.data.get("phone",None)
+        accountName = request.data.get("acc_name",None)
+        accountNumber = request.data.get("acc_no",None)
+        bankName = request.data.get("bank",None)
+        field = [accountName,accountNumber,bankName]
+        user_data = User.objects.get(phone=user_phone)
+        if not None in field and not "" in field:
+            user_data.account_number = accountNumber
+            user_data.account_name = accountName
+            user_data.bank_name = bankName
+            user_data.profile_complete = True
+            user_data.save()
+            return_data = {
+                "success": True,
+                "status" : 201,
+                "message": "Account saved Successfully!",
+            }
+        else:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": "One or more fields is Empty!"
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)

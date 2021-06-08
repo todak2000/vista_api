@@ -13,4 +13,8 @@ urlpatterns = [
     path('api/v1/change_password',views.change_password),
     path('api/v1/dashboard',views.dashboard),
     path('api/v1/profile',views.profile),
+
+    path('api/v1/edit_bio',views.edit_bio),
+    path('api/v1/edit_account',views.edit_account),
+    path('api/v1/edit_password',views.edit_password),
 ]

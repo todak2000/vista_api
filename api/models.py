@@ -16,9 +16,9 @@ class User(models.Model):
     role = models.TextField(max_length=50,verbose_name="User role",default="client")
     walletBalance = models.FloatField(verbose_name="Balance",default=0.00)
     # account details
-    account_name = models.TextField(max_length=150,verbose_name="Account Name",default="Null")
-    account_number = models.TextField(max_length=150,verbose_name="Account Number",default="0000000000")
-    bank_name = models.TextField(max_length=150,verbose_name="Bank Name",default="Null")
+    account_name = models.TextField(max_length=150,verbose_name="Account Name",default="Account Name")
+    account_number = models.TextField(max_length=150,verbose_name="Account Number",default="Account Number")
+    bank_name = models.TextField(max_length=150,verbose_name="Bank Name",default="Bank")
 
     # compliance with vista's terms and condition
     profile_complete = models.BooleanField(default=False)
