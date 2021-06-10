@@ -463,8 +463,6 @@ def dashboard(request,decrypedToken):
             num = len(userTransactions)
             userTransactionsList = []
             for i in range(0,num):
-                sender = userTransactions[i].from_id
-                to = userTransactions[i].to_id
                 date_added = userTransactions[i].date_added
                 transaction_type  = userTransactions[i].transaction_type
                 amount  = userTransactions[i].amount 
@@ -473,7 +471,7 @@ def dashboard(request,decrypedToken):
                     "transaction_type": transaction_type,
                     "transaction_message": transaction_message,
                     "amount": amount,
-                    "date_added": date_added,
+                    "date_added": date_added.strftime('%Y-%m-%d')
                 }
                 userTransactionsList.append(to_json)
             return_data = {
