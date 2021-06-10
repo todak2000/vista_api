@@ -17,4 +17,6 @@ urlpatterns = [
     path('api/v1/edit_bio',views.edit_bio),
     path('api/v1/edit_account',views.edit_account),
     path('api/v1/edit_password',views.edit_password),
+    path('api/v1/withdrawal',views.withdrawal),
+    path('api/v1/fund',views.fund),
 ]
