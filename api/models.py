@@ -26,15 +26,6 @@ class User(models.Model):
 
     date_added = models.DateTimeField(default=timezone.now)
 
-class AccountDetails(models.Model):
-    class Meta:
-        db_table = "Account Details"
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    account_name = models.TextField(max_length=150,unique=True,verbose_name="Account Name")
-    account_number = models.TextField(max_length=150,unique=True,verbose_name="Account Number")
-    bank_name = models.TextField(max_length=150,verbose_name="Bank Name")
-    date_added = models.DateTimeField(default=timezone.now)
-
 class otp(models.Model):
     class Meta:
         db_table = "OTP_Code"
@@ -43,3 +34,17 @@ class otp(models.Model):
     validated = models.BooleanField(default=False)
     password_reset_code = models.TextField(max_length=20,verbose_name="Reset Code",default="")
     date_added = models.DateTimeField(default=timezone.now)
+
+class Transaction(models.Model):
+    class Meta:
+        db_table = "Transaction Table"
+    # Transactions
+    from_id = models.TextField(max_length=20,verbose_name="Sending Party",null=True)
+    to_id = models.TextField(max_length=20,verbose_name="Recieving Party",null=True)
+    transaction_type = models.TextField(max_length=20,verbose_name="Type of Transaction",null=True)
+    transaction_message= models.TextField(max_length=500,verbose_name="Message", null=True)
+    amount = models.FloatField(verbose_name="Amount Sent",null=True)
+    date_added = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.from_id} - {self.to_id} - {self.transaction_type} - {self.amount}"

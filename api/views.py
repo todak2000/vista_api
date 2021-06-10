@@ -4,7 +4,7 @@ import json
 import requests
 import jwt
 from django.db.models import Q
-from api.models import (User, otp, AccountDetails)
+from api.models import (User, otp, Transaction)
 from CustomCode import (autentication, fixed_var, password_functions,
                         string_generator, validator)
 # from django.db.models import Sum
@@ -635,6 +635,95 @@ def edit_account(request):
                 "success": False,
                 "status" : 201,
                 "message": "One or more fields is Empty!"
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
+
+# widthrawal api
+@api_view(["POST"])
+def withdrawal(request):
+    user_phone = request.data.get("phone",None)
+    amount = request.POST["amount"]
+    try: 
+        user_data = User.objects.get(phone=user_phone)
+        newBalance = user_data.walletBalance - float(amount)
+        user_data.walletBalance = newBalance
+        user_data.save()
+
+        newTransaction = Transaction(from_id=user_data.user_id, to_id="Vista", transaction_type="Debit", transaction_message="Withdrawal - Cashout", amount=float(amount))
+        newTransaction.save()
+        if user_data and newTransaction:
+            # Send mail using SMTP
+            mail_subject = user_data.firstname+'! Vista Withdrawal Update'
+            email = {
+                'subject': mail_subject,
+                'html': '<h4>Hello, '+user_data.firstname+'!</h4><p> Your Withdrawal request for NGN'+amount+ ' is being processed and would be sent to your account within 24 hours. Thanks</p>',
+                'text': 'Hello, '+user_data.firstname+'!\n Your withdrawal request of NGN'+amount+ ' is being processed and would be sent to your account within 24 hours',
+                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                'to': [
+                    {'name': user_data.firstname, 'email': user_data.email}
+                ]
+            }
+            SPApiProxy.smtp_send_mail(email)
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": "Withdrawal Successful"
+            }
+        else:
+            return_data = {
+            "success": False,
+            "status" : 201,
+            "message": "something went wrong!"
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
+
+@api_view(["POST"])
+def fund(request):
+    user_phone = request.data.get("phone",None)
+    amount = request.POST["amount"]
+    try: 
+        user_data = User.objects.get(phone=user_phone)
+        newBalance = user_data.walletBalance + float(amount)
+        user_data.walletBalance = newBalance
+        user_data.save()
+
+        newTransaction = Transaction(from_id="Vista", to_id=user_data.user_id, transaction_type="Credit", transaction_message="Top-up - Paystack", amount=float(amount))
+        newTransaction.save()
+        if user_data and newTransaction:
+            # Send mail using SMTP
+            mail_subject = user_data.firstname+'! Vista Top-up Update'
+            email = {
+                'subject': mail_subject,
+                'html': '<h4>Hello, '+user_data.firstname+'!</h4><p> You payment of NGN'+amount+ ' to your Vista wallet was successful</p>',
+                'text': 'Hello, '+user_data.firstname+'!\n You payment of NGN'+amount+ ' to your Vista wallet was successful',
+                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                'to': [
+                    {'name': user_data.firstname, 'email': user_data.email}
+                ]
+            }
+            SPApiProxy.smtp_send_mail(email)
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": "Top-Up Successful"
+            }
+        else:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": "something went wrong!"
             }
     except Exception as e:
         return_data = {
