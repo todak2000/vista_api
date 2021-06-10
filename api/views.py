@@ -411,16 +411,6 @@ def signin(request):
                             "token-expiration": f"{timeLimit}",
                             "user_id": user_data.user_id,
                             "role": f"{user_data.role}",
-                            # "user_details": 
-                            #     {
-                            #         "firstname": f"{user_data.firstname}",
-                            #         "lastname": f"{user_data.lastname}",
-                            #         "email": f"{user_data.email}",
-                            #         "phonenumber": f"{user_data.phone}",
-                            #         "address": f"{user_data.address}",
-                            #         "state": f"{user_data.state}",
-                            #         "role": f"{user_data.role}",
-                            #     }
                         }
                         return Response(return_data)
                     elif is_verified == False:
@@ -476,9 +466,9 @@ def dashboard(request,decrypedToken):
                 "user_details": 
                     {
                         "firstname": f"{user_data.firstname}",
-                        # "lastname": f"{user_data.lastname}",
-                        # "email": f"{user_data.email}",
-                        # "phonenumber": f"{user_data.phone}",
+                        "lastname": f"{user_data.lastname}",
+                        "email": f"{user_data.email}",
+                        "phonenumber": f"{user_data.phone}",
                         "address": f"{user_data.address}",
                         "state": f"{user_data.state}",
                         "role": f"{user_data.role}",
@@ -515,7 +505,7 @@ def profile(request,decrypedToken):
                     {
                         "firstname": f"{user_data.firstname}",
                         "lastname": f"{user_data.lastname}",
-                        # "email": f"{user_data.email}",
+                        "email": f"{user_data.email}",
                         "phonenumber": f"{user_data.phone}",
                         "address": f"{user_data.address}",
                         "state": f"{user_data.state}",
