@@ -704,10 +704,18 @@ def edit_account(request):
 def withdrawal(request):
     user_phone = request.data.get("phone",None)
     amount = request.POST["amount"]
+    account_name = request.POST["account_name"]
+    account_no = request.POST["account_no"]
+    bank = request.POST["bank"]
+    save = request.POST["save_account_details"]
     try: 
         user_data = User.objects.get(phone=user_phone)
         newBalance = user_data.walletBalance - float(amount)
         user_data.walletBalance = newBalance
+        if save == True:
+            user_data.account_name = account_name
+            user_data.account_number = account_no
+            user_data.bank_name = bank
         user_data.save()
 
         newTransaction = Transaction(from_id=user_data.user_id, to_id="Vista", transaction_type="Debit", transaction_message="Withdrawal - Cashout", amount=float(amount))
