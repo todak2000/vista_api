@@ -23,4 +23,5 @@ urlpatterns = [
     # v2 apis starts here
     path('api/v1/request',views.service_request),
     path('api/v1/accept_sp',views.accept_sp),
+    path('api/v1/services',views.services),
 ]
