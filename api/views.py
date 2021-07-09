@@ -903,7 +903,7 @@ def services(request,decrypedToken):
             num = len(userServices)
             userServicesList = []
             for i in range(0,num):
-                sp_id = userServices[i].user_id
+                sp_id = userServices[i].sp_id
                 client_id= userServices[i].client_id
                 job_id = userServices[i].id
                 date_added = userServices[i].date_added
