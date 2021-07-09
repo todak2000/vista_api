@@ -890,3 +890,55 @@ def accept_sp(request):
             "message": str(e)
         }
     return Response(return_data)
+
+@api_view(["GET"])
+@autentication.token_required
+def services(request,decrypedToken):
+    try:
+        user_id = decrypedToken['user_id']
+        if user_id != None and user_id != '':
+            #get user info
+            user_data = User.objects.get(user_id=decrypedToken["user_id"])
+            userServices = Services.objects.filter(Q(client_id__icontains=user_id) | Q(sp_id__icontains=user_id)).order_by('-date_added')[:20]
+            num = len(userServices)
+            userServicesList = []
+            for i in range(0,num):
+                sp_id = userServices[i].user_id
+                client_id= userServices[i].client_id
+                job_id = userServices[i].id
+                date_added = userServices[i].date_added
+                service_type  = userServices[i].service_type
+                isTaken  = userServices[i].isTaken
+                isRejectedSP = userServices[i].isRejectedSP
+                isCompleted = userServices[i].isCompleted
+                to_json = {
+                    "sp_id": sp_id,
+                    "client_id": client_id,
+                    "job_id": job_id,
+                    "isTaken": isTaken,
+                    "service_type": service_type,
+                    "isRejectedSP": isRejectedSP,
+                    "isCompleted": isCompleted,
+                    "date_added": date_added,
+                }
+                userServicesList.append(to_json)
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": "Successfull",
+                "user_id": user_data.user_id,
+                "userServices": userServicesList
+            }
+        else:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": "Invalid Parameter"
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
