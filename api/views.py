@@ -899,7 +899,7 @@ def services(request,decrypedToken):
         if user_id != None and user_id != '':
             #get user info
             user_data = User.objects.get(user_id=decrypedToken["user_id"])
-            userServices = Services.objects.filter(Q(client_id__icontains=user_id) | Q(sp_id__icontains=user_id)).order_by('-date_added')[:20]
+            userServices = Services.objects.filter(Q(client_id__icontains=user_id) | Q(sp_id__icontains=user_id)).order_by('-date_added')[:5]
             num = len(userServices)
             userServicesList = []
             for i in range(0,num):
