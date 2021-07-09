@@ -922,13 +922,27 @@ def services(request,decrypedToken):
                     "date_added": date_added,
                 }
                 userServicesList.append(to_json)
-            return_data = {
-                "success": True,
-                "status" : 200,
-                "message": "Successfull",
-                "user_id": user_data.user_id,
-                "userServices": userServicesList
-            }
+            if num > 0:
+                return_data = {
+                    "success": True,
+                    "status" : 200,
+                    "message": "Successfull",
+                    "user_id": user_data.user_id,
+                    "userServices": userServicesList
+                }
+            if num <= 0:
+                return_data = {
+                    "success": True,
+                    "status" : 200,
+                    "message": "Sorry! You have no current job/Service rendered by or for you."
+                }
+            # return_data = {
+            #     "success": True,
+            #     "status" : 200,
+            #     "message": "Successfull",
+            #     "user_id": user_data.user_id,
+            #     "userServices": userServicesList
+            # }
         else:
             return_data = {
                 "success": False,
