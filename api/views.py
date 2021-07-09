@@ -704,10 +704,10 @@ def edit_account(request):
 def withdrawal(request):
     user_phone = request.data.get("phone",None)
     amount = request.POST["amount"]
-    account_name = request.POST["account_name"]
-    account_no = request.POST["account_no"]
-    bank = request.POST["bank"]
-    save = request.POST["save_account_details"]
+    account_name = request.data.get("account_name",None) 
+    account_no = request.data.get("account_no",None) 
+    bank = request.data.get("bank",None) 
+    save = request.data.get("save_account_details",None) 
     try: 
         user_data = User.objects.get(phone=user_phone)
         newBalance = user_data.walletBalance - float(amount)
