@@ -857,7 +857,7 @@ def service_request(request):
 @api_view(["POST"])
 def accept_sp(request):
     sp_id = request.data.get("sp_id",None)
-    job_id = request.data.get("job_id",None)
+    job_id = int(request.data.get("job_id",None))
     try: 
         updateService = Services.objects.get(id=job_id)
         updateService.sp_id = sp_id
