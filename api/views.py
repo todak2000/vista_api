@@ -849,12 +849,12 @@ def service_request(request):
                 "status" : 200,
                 "message": "Sorry! there are no "+service_type+ " Service Providers around you."
             }
-        else:
-            return_data = {
-                "success": False,
-                "status" : 201,
-                "message": "something went wrong!"
-            }
+        # else:
+        #     return_data = {
+        #         "success": False,
+        #         "status" : 201,
+        #         "message": "something went wrong!"
+        #     }
         
     except Exception as e:
         return_data = {
