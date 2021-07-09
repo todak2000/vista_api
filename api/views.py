@@ -809,7 +809,7 @@ def service_request(request):
         client_data = User.objects.get(phone=user_phone)
         newService = Services(client_id=client_data.user_id, budget=budget, service_type=service_type, details=details, tools=tools)
         newService.save()
-        serviceProviders=User.objects.filter(role='0',state=client_data.state, service=service_type).order_by('-date_added')[:5]
+        serviceProviders=User.objects.filter(role='0',state=client_data.state, service=service_type, engaged=False).order_by('-date_added')[:5]
         num = len(serviceProviders)
         serviceProvidersList = []
         for i in range(0,num):
@@ -856,47 +856,32 @@ def service_request(request):
 
 @api_view(["POST"])
 def accept_sp(request):
-    user_phone = request.data.get("phone",None)
     sp_id = request.data.get("sp_id",None)
+    job_id = request.data.get("job_id",None)
     try: 
-        client_data = User.objects.get(phone=user_phone)
-        updateService = Services.objects.get(client_id=client_data)
+        updateService = Services.objects.get(id=job_id)
+        updateService.sp_id = sp_id
         updateService.save()
-        serviceProviders=User.objects.filter(role='0',state=client_data.state, service=service_type).order_by('-date_added')[:5]
-        num = len(serviceProviders)
-        serviceProvidersList = []
-        for i in range(0,num):
-            sp_id = serviceProviders[i].user_id
-            sp_firstname = serviceProviders[i].firstname
-            sp_lastname = serviceProviders[i].lastname
-            date_added = serviceProviders[i].date_added
-            sp_address  = serviceProviders[i].address
-            sp_phone  = serviceProviders[i].phone 
-            sp_state = serviceProviders[i].state
-            sp_ratings = serviceProviders[i].ratings
-            to_json = {
-                "sp_id": sp_id,
-                "sp_firstname": sp_firstname,
-                "sp_lastname": sp_lastname,
-                "sp_address": sp_address,
-                "sp_phone": sp_phone,
-                "sp_state":sp_state,
-                "sp_ratings":sp_ratings,
-                "date_added": date_added,
+
+        sp_data = User.objects.get(user_id=sp_id)
+        sp_data.engaged =True
+        sp_data.save()
+        if updateService and sp_data :
+            # Send mail using SMTP
+            mail_subject = sp_data.firstname+'! Vista Job/Service Update'
+            email = {
+                'subject': mail_subject,
+                'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> You have a new Job/Service Request from a client. Kindly login to your dashboard and accept/Reject the Job/Service.</p>',
+                'text': 'Hello, '+sp_data.firstname+'!\n You have a new Job/Service Request from a client. Kindly login to your dashboard and accept/Reject the Job/Service',
+                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                'to': [
+                    {'name': sp_data.firstname, 'email': sp_data.email}
+                ]
             }
-            serviceProvidersList.append(to_json)
-        if newService and num > 0:
-            
+            SPApiProxy.smtp_send_mail(email)
             return_data = {
                 "success": True,
                 "status" : 200,
-                "serviceProviders": serviceProvidersList
-            }
-        if newService and num <= 0:
-            return_data = {
-                "success": True,
-                "status" : 200,
-                "message": "Sorry! there are no "+service_type+ " Service Providers around you."
             }
     except Exception as e:
         return_data = {

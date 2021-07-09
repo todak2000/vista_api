@@ -24,7 +24,7 @@ class User(models.Model):
     profile_complete = models.BooleanField(default=False)
     terms_conditions = models.BooleanField(default=False)
     service= models.TextField(max_length=150,verbose_name="Service Rendered",null=True)
-
+    engaged = models.BooleanField(default=False, verbose_name="Is the SP currently doing a job")
     date_added = models.DateTimeField(default=timezone.now)
 
 class otp(models.Model):
