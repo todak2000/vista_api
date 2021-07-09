@@ -712,7 +712,7 @@ def withdrawal(request):
         user_data = User.objects.get(phone=user_phone)
         newBalance = user_data.walletBalance - float(amount)
         user_data.walletBalance = newBalance
-        if save == True:
+        if save == "true":
             user_data.account_name = account_name
             user_data.account_number = account_no
             user_data.bank_name = bank
@@ -737,6 +737,7 @@ def withdrawal(request):
                 "success": True,
                 "status" : 200,
                 "save": save,
+                "account_name": user_data.account_name,
                 "message": "Withdrawal Successful"
             }
         else:
