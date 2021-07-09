@@ -813,7 +813,7 @@ def service_request(request):
         # serviceProviders=Services.objects.filter(Q(role=0) | Q(__icontains=user_id)).order_by('-date_added')[:20]
         newService = Services(client_id=client_data.user_id, budget=budget, service_type=service_type, details=details, tools=tools)
         newService.save()
-        serviceProviders=User.objects.filter(role=0,state=client_data.state, service=service_type).order_by('-date_added')[:5]
+        serviceProviders=User.objects.filter(role='0',state=client_data.state, service=service_type).order_by('-date_added')[:5]
         num = len(serviceProviders)
         serviceProvidersList = []
         for i in range(0,num):
