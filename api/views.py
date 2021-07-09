@@ -807,12 +807,61 @@ def service_request(request):
     details = request.data.get("details",None)
     try: 
         client_data = User.objects.get(phone=user_phone)
-        # newBalance = user_data.walletBalance + float(amount)
-        # user_data.walletBalance = newBalance
-        # user_data.save()
-        # serviceProviders=Services.objects.filter(Q(role=0) | Q(__icontains=user_id)).order_by('-date_added')[:20]
         newService = Services(client_id=client_data.user_id, budget=budget, service_type=service_type, details=details, tools=tools)
         newService.save()
+        serviceProviders=User.objects.filter(role='0',state=client_data.state, service=service_type).order_by('-date_added')[:5]
+        num = len(serviceProviders)
+        serviceProvidersList = []
+        for i in range(0,num):
+            sp_id = serviceProviders[i].user_id
+            sp_firstname = serviceProviders[i].firstname
+            sp_lastname = serviceProviders[i].lastname
+            date_added = serviceProviders[i].date_added
+            sp_address  = serviceProviders[i].address
+            sp_phone  = serviceProviders[i].phone 
+            sp_state = serviceProviders[i].state
+            sp_ratings = serviceProviders[i].ratings
+            to_json = {
+                "sp_id": sp_id,
+                "sp_firstname": sp_firstname,
+                "sp_lastname": sp_lastname,
+                "sp_address": sp_address,
+                "sp_phone": sp_phone,
+                "sp_state":sp_state,
+                "sp_ratings":sp_ratings,
+                "date_added": date_added,
+            }
+            serviceProvidersList.append(to_json)
+        if newService and num > 0:
+            
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "job_id": newService.id, 
+                "serviceProviders": serviceProvidersList
+            }
+        if newService and num <= 0:
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": "Sorry! there are no "+service_type+ " Service Providers around you."
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
+
+@api_view(["POST"])
+def accept_sp(request):
+    user_phone = request.data.get("phone",None)
+    sp_id = request.data.get("sp_id",None)
+    try: 
+        client_data = User.objects.get(phone=user_phone)
+        updateService = Services.objects.get(client_id=client_data)
+        updateService.save()
         serviceProviders=User.objects.filter(role='0',state=client_data.state, service=service_type).order_by('-date_added')[:5]
         num = len(serviceProviders)
         serviceProvidersList = []
@@ -849,13 +898,6 @@ def service_request(request):
                 "status" : 200,
                 "message": "Sorry! there are no "+service_type+ " Service Providers around you."
             }
-        # else:
-        #     return_data = {
-        #         "success": False,
-        #         "status" : 201,
-        #         "message": "something went wrong!"
-        #     }
-        
     except Exception as e:
         return_data = {
             "success": False,
