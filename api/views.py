@@ -4,8 +4,8 @@ import json
 import requests
 import jwt
 from django.db.models import Q
-from api.models import (User, otp, Transaction)
-from CustomCode import (autentication, fixed_var, password_functions,
+from api.models import (User, otp, Transaction, Escrow, Services)
+from CustomCode import (autentication, password_functions,
                         string_generator, validator)
 # from django.db.models import Sum
 from rest_framework.decorators import api_view
@@ -790,6 +790,72 @@ def fund(request):
                 "status" : 201,
                 "message": "something went wrong!"
             }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
+
+@api_view(["POST"])
+def service_request(request):
+    user_phone = request.data.get("phone",None)
+    service_type = request.data.get("service_type",None)
+    tools= request.data.get("tools",None)
+    budget = request.data.get("budget",None)
+    details = request.data.get("details",None)
+    try: 
+        client_data = User.objects.get(phone=user_phone)
+        # newBalance = user_data.walletBalance + float(amount)
+        # user_data.walletBalance = newBalance
+        # user_data.save()
+        # serviceProviders=Services.objects.filter(Q(role=0) | Q(__icontains=user_id)).order_by('-date_added')[:20]
+        newService = Services(client_id=client_data.user_id, budget=budget, service_type=service_type, details=details, tools=tools)
+        newService.save()
+        serviceProviders=User.objects.filter(role=0,state=client_data.state, service=service_type).order_by('-date_added')[:5]
+        num = len(serviceProviders)
+        serviceProvidersList = []
+        for i in range(0,num):
+            sp_id = serviceProviders[i].user_id
+            sp_firstname = serviceProviders[i].firstname
+            sp_lastname = serviceProviders[i].lastname
+            date_added = serviceProviders[i].date_added
+            sp_address  = serviceProviders[i].address
+            sp_phone  = serviceProviders[i].phone 
+            sp_state = serviceProviders[i].state
+            sp_ratings = serviceProviders[i].ratings
+            to_json = {
+                "sp_id": sp_id,
+                "sp_firstname": sp_firstname,
+                "sp_lastname": sp_lastname,
+                "sp_address": sp_address,
+                "sp_phone": sp_phone,
+                "sp_state":sp_state,
+                "sp_ratings":sp_ratings,
+                "date_added": date_added,
+            }
+            serviceProvidersList.append(to_json)
+        if newService and num > 0:
+            
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "serviceProviders": serviceProvidersList
+            }
+        if newService and num <= 0:
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": "Sorry! there are no "+service_type+ " Service Providers around you."
+            }
+        else:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": "something went wrong!"
+            }
+        
     except Exception as e:
         return_data = {
             "success": False,

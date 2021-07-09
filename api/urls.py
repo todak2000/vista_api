@@ -19,4 +19,7 @@ urlpatterns = [
     path('api/v1/edit_password',views.edit_password),
     path('api/v1/withdrawal',views.withdrawal),
     path('api/v1/fund',views.fund),
+
+    # v2 apis starts here
+    path('api/v1/request',views.service_request),
 ]
