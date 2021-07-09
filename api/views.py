@@ -490,6 +490,10 @@ def dashboard(request,decrypedToken):
                         "state": f"{user_data.state}",
                         "role": f"{user_data.role}",
                         "balance": f"{user_data.walletBalance}",
+                        "accountname": f"{user_data.account_name}",
+                        "accountno": f"{user_data.account_number}",
+                        "bank": f"{user_data.bank_name}",
+                        "service": f"{user_data.service}",
                     }
             }
         else:
