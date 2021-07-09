@@ -42,6 +42,7 @@ def signup(request):
         address = request.data.get('address',None)
         state = request.data.get('state',None)
         role= request.data.get('role',None)
+        service= request.data.get('service',None)
         reg_field = [firstName,lastName,phoneNumber,email,password,address, state, role]
         if not None in reg_field and not "" in reg_field:
             if User.objects.filter(phone =phoneNumber).exists() or User.objects.filter(email =email).exists():
@@ -67,7 +68,7 @@ def signup(request):
                 #Save user_data
                 new_userData = User(user_id=userRandomId,firstname=firstName,lastname=lastName,
                                 email=email,phone=phoneNumber,
-                                password=encryped_password,address=address, state=state, role=role)
+                                password=encryped_password,address=address, state=state, role=role, service=service)
                 new_userData.save()
                 #Generate OTP
                 code = string_generator.numeric(4)

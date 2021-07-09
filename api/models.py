@@ -23,6 +23,7 @@ class User(models.Model):
     # compliance with vista's terms and condition
     profile_complete = models.BooleanField(default=False)
     terms_conditions = models.BooleanField(default=False)
+    service= models.TextField(max_length=150,verbose_name="Service Rendered",null=True)
 
     date_added = models.DateTimeField(default=timezone.now)
 
