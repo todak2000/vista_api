@@ -736,6 +736,7 @@ def withdrawal(request):
             return_data = {
                 "success": True,
                 "status" : 200,
+                "save": save,
                 "message": "Withdrawal Successful"
             }
         else:
