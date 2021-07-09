@@ -530,6 +530,7 @@ def profile(request,decrypedToken):
                         "accountname": f"{user_data.account_name}",
                         "accountno": f"{user_data.account_number}",
                         "bank": f"{user_data.bank_name}",
+                        "service": f"{user_data.service}",
                         # "isVerified": f"{user_data.address}",
                     }
             }
