@@ -1027,7 +1027,7 @@ def client_cancel(request):
             return_data = {
                 "success": True,
                 "status" : 200,
-                "job_details": updateService.
+                "job_details": updateService
             }
     except Exception as e:
         return_data = {
