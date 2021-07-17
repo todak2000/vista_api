@@ -959,6 +959,7 @@ def job_details(request):
         job_id = request.data.get("job_id",None)
         if job_id != None and job_id != '':
             job_data = Services.objects.get(id=job_id)
+            print(job_data)
             to_json = {
                 "sp_id": job_data.sp_id,
                 "client_id": job_data.client_id,
@@ -973,13 +974,12 @@ def job_details(request):
                 "date_added": job_data.date_added,
             }
             
-            if job_data:
-                return_data = {
-                    "success": True,
-                    "status" : 200,
-                    "message": "Successfull",
-                    "job_details": to_json
-                }
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": "Successfull",
+                "job_details": to_json
+            }
         else:
             return_data = {
                 "success": False,
