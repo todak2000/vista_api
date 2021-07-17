@@ -1004,7 +1004,8 @@ def client_cancel(request):
     job_id = request.data.get("job_id",None)
     try: 
         updateService = Services.objects.get(id=int(job_id))
-        updateService.isRejectedSp = True 
+        updateService.isRejectedSp = True
+        updateService.tools = "Hammer"
         updateService.sp_reject_id = client_id
         updateService.save()
 
