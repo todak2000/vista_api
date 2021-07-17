@@ -24,5 +24,5 @@ urlpatterns = [
     path('api/v1/request',views.service_request),
     path('api/v1/accept_sp',views.accept_sp),
     path('api/v1/services',views.services),
-    path('api/v1/job_details',views.job_details),
+    path('api/v1/job_details/<int:job_id>',views.job_details),
 ]

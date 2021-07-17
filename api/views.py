@@ -954,9 +954,9 @@ def services(request,decrypedToken):
     return Response(return_data)
 
 @api_view(["GET"])
-def job_details(request):
+def job_details(request, job_id):
     try:
-        job_id = request.data.get("job_id",None)
+        # job_id = request.data.get("job_id",None)
         if job_id != None and job_id != '':
             job_data = Services.objects.get(id=job_id)
             # print(job_data)
