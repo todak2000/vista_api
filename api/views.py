@@ -1027,7 +1027,7 @@ def client_cancel(request):
             return_data = {
                 "success": True,
                 "status" : 200,
-                "job_rejected": updateService.isRejectedSp,
+                "job_rejected": updateService.isRejectedSP,
                 "job_reject_id": updateService.sp_reject_id,
                 "sp_engage": sp_data.engaged
             }
