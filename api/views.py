@@ -995,3 +995,85 @@ def job_details(request, job_id):
             "message": str(e)
         }
     return Response(return_data)
+
+
+@api_view(["POST"])
+def client_cancel(request):
+    client_id = request.data.get("client_id",None)
+    sp_id = request.data.get("sp_id",None)
+    job_id = request.data.get("job_id",None)
+    try: 
+        updateService = Services.objects.get(id=int(job_id))
+        updateService.isRejectedSp = True
+        updateService.sp_reject_id = client_id
+        updateService.save()
+
+        sp_data = User.objects.get(user_id=sp_id)
+        sp_data.engaged =False
+        sp_data.save()
+        if updateService and sp_data :
+            # Send mail using SMTP
+            mail_subject = sp_data.firstname+'! Vista Job/Service Update'
+            email = {
+                'subject': mail_subject,
+                'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have canceled the Job.</p>',
+                'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have canceled the Job.',
+                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                'to': [
+                    {'name': sp_data.firstname, 'email': sp_data.email}
+                ]
+            }
+            SPApiProxy.smtp_send_mail(email)
+            return_data = {
+                "success": True,
+                "status" : 200,
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
+
+
+@api_view(["POST"])
+def client_confirm(request):
+    client_id = request.data.get("client_id",None)
+    sp_id = request.data.get("sp_id",None)
+    job_id = request.data.get("job_id",None)
+    ratings = request.data.get("ratings",None)
+    try: 
+        updateService = Services.objects.get(id=int(job_id))
+        updateService.isCompleted = True
+        updateService.save()
+
+        sp_data = User.objects.get(user_id=sp_id)
+        sp_data.engaged =False
+        newRatings = (sp_data.ratings + float(ratings))/2
+        sp_data.ratings = newRatings
+        sp_data.save()
+        if updateService and sp_data :
+            # Send mail using SMTP
+            mail_subject = sp_data.firstname+'! Vista Job/Service Update'
+            email = {
+                'subject': mail_subject,
+                'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have confirmed the Job Completion. Please kindly check your wallet for your earnings</p>',
+                'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have confirmed the Job Completion. Please kindly check your wallet for your earnings',
+                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                'to': [
+                    {'name': sp_data.firstname, 'email': sp_data.email}
+                ]
+            }
+            SPApiProxy.smtp_send_mail(email)
+            return_data = {
+                "success": True,
+                "status" : 200,
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
