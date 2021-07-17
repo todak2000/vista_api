@@ -74,7 +74,7 @@ class Services(models.Model):
     sp_id = models.TextField(max_length=20,verbose_name="Service Provider ID",null=True)
     budget= models.CharField(max_length=500,verbose_name="Client Budget", null=True)
     service_type= models.TextField(max_length=500,verbose_name="Type of Services/Job", null=True)
-    sp_reject_id= models.TextField(max_length=500,verbose_name="Service Provider ID", null=True)
+    sp_reject_id= models.TextField(max_length=500,verbose_name="Service Provider ID who rejected job", null=True)
     
     details= models.CharField(max_length=500,verbose_name="Job/Service Details", null=True)
     tools= models.CharField(max_length=500,verbose_name="Tools required for the Job/Service", null=True)

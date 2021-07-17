@@ -939,18 +939,52 @@ def services(request,decrypedToken):
                     "status" : 200,
                     "message": "Sorry! You have no current job/Service rendered by or for you."
                 }
-            # return_data = {
-            #     "success": True,
-            #     "status" : 200,
-            #     "message": "Successfull",
-            #     "user_id": user_data.user_id,
-            #     "userServices": userServicesList
-            # }
         else:
             return_data = {
                 "success": False,
                 "status" : 201,
                 "message": "Invalid Parameter"
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
+
+@api_view(["GET"])
+def job_details(request):
+    try:
+        job_id = request.data.get("job_id",None)
+        if job_id != None and job_id != '':
+            job_data = Services.objects.get(id=job_id)
+            to_json = {
+                "sp_id": job_data.sp_id,
+                "client_id": job_data.client_id,
+                "job_id": job_data.id,
+                "details": job_data.details,
+                "tools": job_data.tools,
+                "budget": job_data.budget,
+                "isTaken": job_data.isTaken,
+                "service_type": job_data.service_type,
+                "isRejectedSP": job_data.isRejectedSP,
+                "isCompleted": job_data.isCompleted,
+                "date_added": job_data.date_added,
+            }
+            
+            if job_data:
+                return_data = {
+                    "success": True,
+                    "status" : 200,
+                    "message": "Successfull",
+                    "job_details": to_json
+                }
+        else:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": "Job details don't exist!"
             }
     except Exception as e:
         return_data = {
