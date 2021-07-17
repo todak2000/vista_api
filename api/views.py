@@ -1004,7 +1004,7 @@ def client_cancel(request):
     job_id = request.data.get("job_id",None)
     try: 
         updateService = Services.objects.get(id=int(job_id))
-        updateService.isRejectedSp = True
+        updateService.isRejectedSp = True 
         updateService.sp_reject_id = client_id
         updateService.save()
 
@@ -1027,7 +1027,7 @@ def client_cancel(request):
             return_data = {
                 "success": True,
                 "status" : 200,
-                "check_job_status": updateService.isRejectedSp
+                "job_details": updateService.
             }
     except Exception as e:
         return_data = {
