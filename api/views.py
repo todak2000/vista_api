@@ -1027,7 +1027,7 @@ def client_cancel(request):
             return_data = {
                 "success": True,
                 "status" : 200,
-                "check_job_status": updateService.sp_reject_id
+                "check_job_status": updateService.isRejectedSp
             }
     except Exception as e:
         return_data = {
