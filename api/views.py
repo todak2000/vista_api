@@ -839,7 +839,7 @@ def service_request(request):
                 "job_id": newService.id, 
                 "serviceProviders": serviceProvidersList
             }
-        if newService and num <= 0:
+        if num <= 0:
             return_data = {
                 "success": True,
                 "status" : 200,
