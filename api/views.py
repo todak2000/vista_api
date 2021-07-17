@@ -985,7 +985,7 @@ def job_details(request):
             return_data = {
                 "success": False,
                 "status" : 201,
-                "job_id": job_id
+                "job_id": job_id,
                 "message": "Job details don't exist!"
             }
     except Exception as e:
