@@ -899,7 +899,7 @@ def services(request,decrypedToken):
             #get user info
             user_data = User.objects.get(user_id=decrypedToken["user_id"])
             if user_data.role == "0":  # artisan
-                userServices = Services.objects.filter(p_id=user_id).order_by('-date_added')[:5]
+                userServices = Services.objects.filter(sp_id=user_id).order_by('-date_added')[:5]
             else: # client
                 userServices = Services.objects.filter(client_id=user_id).order_by('-date_added')[:5]
             
@@ -1027,9 +1027,6 @@ def client_cancel(request):
             return_data = {
                 "success": True,
                 "status" : 200,
-                "job_rejected": updateService.isRejectedSP,
-                "job_reject_id": updateService.sp_reject_id,
-                "sp_engage": sp_data.engaged
             }
     except Exception as e:
         return_data = {
