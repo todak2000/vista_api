@@ -899,7 +899,11 @@ def services(request,decrypedToken):
         if user_id != None and user_id != '':
             #get user info
             user_data = User.objects.get(user_id=decrypedToken["user_id"])
-            userServices = Services.objects.filter(Q(client_id__icontains=user_id) | Q(sp_id__icontains=user_id)).order_by('-date_added')[:5]
+            if user_data.role == "0":  # artisan
+                userServices = Services.objects.filter(p_id=user_id).order_by('-date_added')[:5]
+            else: # client
+                userServices = Services.objects.filter(client_id=user_id).order_by('-date_added')[:5]
+            
             num = len(userServices)
             userServicesList = []
             for i in range(0,num):
