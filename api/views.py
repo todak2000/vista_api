@@ -807,8 +807,6 @@ def service_request(request):
     details = request.data.get("details",None)
     try: 
         client_data = User.objects.get(phone=user_phone)
-        newService = Services(client_id=client_data.user_id, budget=budget, service_type=service_type, details=details, tools=tools)
-        newService.save()
         serviceProviders=User.objects.filter(role='0',state=client_data.state, service=service_type, engaged=False).order_by('-date_added')[:5]
         num = len(serviceProviders)
         serviceProvidersList = []
@@ -832,8 +830,9 @@ def service_request(request):
                 "date_added": date_added,
             }
             serviceProvidersList.append(to_json)
-        if newService and num > 0:
-            
+        if num > 0:
+            newService = Services(client_id=client_data.user_id, budget=budget, service_type=service_type, details=details, tools=tools)
+            newService.save()
             return_data = {
                 "success": True,
                 "status" : 200,
