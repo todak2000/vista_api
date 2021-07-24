@@ -1056,7 +1056,8 @@ def client_confirm(request):
         sp_data.engaged =False
         newRatings = (sp_data.ratings + float(ratings))/2
         sp_data.ratings = newRatings
-        newClientBalance = sp_data.walletBalance + (updateService.budget* 0.9)
+        fees = updateService.budget* 0.9
+        newClientBalance = sp_data.walletBalance + fees
         sp_data.walletBalance = newClientBalance
         sp_data.save()
         updateEscrow=Escrow.objects.get(job_id=job_id)
