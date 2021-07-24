@@ -1090,7 +1090,7 @@ def accept_job(request):
         updateService = Services.objects.get(id=int(job_id))
         updateService.isTaken = True
         updateService.save()
-        client_data = User.object.get(user_id=updateService.client_id)
+        client_data = User.objects.get(user_id=updateService.client_id)
         if updateService:
             # Send mail using SMTP
             mail_subject = client_data.firstname+'! Vista Job/Service Update'
