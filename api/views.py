@@ -1056,7 +1056,7 @@ def client_confirm(request):
         sp_data.engaged =False
         newRatings = (sp_data.ratings + float(ratings))/2
         sp_data.ratings = newRatings
-        newClientBalance = sp_data.walletBalance + float(updateService.budget)* 0.9
+        newClientBalance = float(sp_data.walletBalance) + float(updateService.budget)* 0.9
         sp_data.walletBalance = newClientBalance
         sp_data.save()
         updateEscrow=Escrow.objects.get(job_id=job_id)
@@ -1181,30 +1181,24 @@ def complete_job(request):
     job_id = request.data.get("job_id",None)
     try: 
         updateService = Services.objects.get(id=int(job_id))
-        updateService.isCompleted = True
-        updateService.save()
-
-        # sp_data = User.objects.get(user_id=sp_id)
-        # sp_data.engaged =False
-        # sp_data.save()
+       
         client_data = User.objects.get(user_id=updateService.client_id)
-        if updateService:
-            # Send mail using SMTP
-            mail_subject = client_data.firstname+'! Vista Job/Service Update'
-            email = {
-                'subject': mail_subject,
-                'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your job has been completed by the Service provider. Kindly log on to the Vista app to confirm. Thanks</p>',
-                'text': 'Hello, '+client_data.firstname+'!\n Your job has been completed by the Service provider. Kindly log on to the Vista app to confirm. Thanks',
-                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
-                'to': [
-                    {'name': client_data.firstname, 'email': client_data.email}
-                ]
-            }
-            SPApiProxy.smtp_send_mail(email)
-            return_data = {
-                "success": True,
-                "status" : 200,
-            }
+        # Send mail using SMTP
+        mail_subject = client_data.firstname+'! Vista Job/Service Update'
+        email = {
+            'subject': mail_subject,
+            'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your job has been completed by the Service provider. Kindly log on to the Vista app to confirm. Thanks</p>',
+            'text': 'Hello, '+client_data.firstname+'!\n Your job has been completed by the Service provider. Kindly log on to the Vista app to confirm. Thanks',
+            'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+            'to': [
+                {'name': client_data.firstname, 'email': client_data.email}
+            ]
+        }
+        SPApiProxy.smtp_send_mail(email)
+        return_data = {
+            "success": True,
+            "status" : 200,
+        }
     except Exception as e:
         return_data = {
             "success": False,
