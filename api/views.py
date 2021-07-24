@@ -959,6 +959,8 @@ def job_details(request, job_id):
         # job_id = request.data.get("job_id",None)
         if job_id != None and job_id != '':
             job_data = Services.objects.get(id=job_id)
+            client_data = User.objects.get(user_id=job_data.client_id)
+            sp_data = User.objects.get(user_id=job_data.sp_id)
             # print(job_data)
             to_json = {
                 "sp_id": job_data.sp_id,
@@ -968,6 +970,8 @@ def job_details(request, job_id):
                 "tools": job_data.tools,
                 "budget": job_data.budget,
                 "isTaken": job_data.isTaken,
+                "sp_phone": sp_data.phone,
+                "clientAddress": client_data.address+ " "+client_data.state ,
                 "service_type": job_data.service_type,
                 "isRejectedSP": job_data.isRejectedSP,
                 "isCompleted": job_data.isCompleted,
