@@ -1056,7 +1056,7 @@ def client_confirm(request):
         sp_data.engaged =False
         newRatings = (sp_data.ratings + float(ratings))/2
         sp_data.ratings = newRatings
-        fees = updateService.budget* 0.9
+        fees = (updateService.budget* 0.9)
         newClientBalance = sp_data.walletBalance + fees
         sp_data.walletBalance = newClientBalance
         sp_data.save()
@@ -1086,7 +1086,9 @@ def client_confirm(request):
         return_data = {
             "success": False,
             "status" : 201,
-            "message": str(e)
+            "message": str(e),
+            "fees": fees,
+            "newBalance": newClientBalance
         }
     return Response(return_data)
 
