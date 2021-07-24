@@ -3,7 +3,7 @@ import datetime
 import json
 import requests
 import jwt
-from django.db.models import Q
+from django.db.models import Q, Sum
 from api.models import (User, otp, Transaction, Escrow, Services)
 from CustomCode import (autentication, password_functions,
                         string_generator, validator)
@@ -1056,7 +1056,7 @@ def client_confirm(request):
         sp_data.engaged =False
         newRatings = (sp_data.ratings + float(ratings))/2
         sp_data.ratings = newRatings
-        newClientBalance = float(sp_data.walletBalance + (float(updateService.budget)* 0.9))
+        newClientBalance = sp_data.walletBalance + (updateService.budget* 0.9)
         sp_data.walletBalance = newClientBalance
         sp_data.save()
         updateEscrow=Escrow.objects.get(job_id=job_id)
