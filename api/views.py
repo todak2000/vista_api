@@ -1070,8 +1070,8 @@ def client_confirm(request):
             mail_subject = sp_data.firstname+'! Vista Job/Service Update'
             email = {
                 'subject': mail_subject,
-                'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+fees+'. Please kindly check your wallet for your earnings</p>',
-                'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+fees+'. Please kindly check your wallet for your earnings',
+                'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+str(fees)+'. Please kindly check your wallet for your earnings</p>',
+                'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+str(fees)+'. Please kindly check your wallet for your earnings',
                 'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': sp_data.firstname, 'email': sp_data.email}
@@ -1114,8 +1114,8 @@ def accept_job(request):
             mail_subject = client_data.firstname+'! Vista Job/Service Update'
             email = {
                 'subject': mail_subject,
-                'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your Job/Service offer has been accepted and you have been debited the sum of NGN'+updateService.budget+'. Kindly give the Service provider all the details needed to get the job done. thanks</p>',
-                'text': 'Hello, '+client_data.firstname+'!\n Your Job/Service offer has been accepted and you have been debited the sum of NGN'+updateService.budget+'. . Kindly give the Service provider all the details needed to get the job done. thanks',
+                'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your Job/Service offer has been accepted and you have been debited the sum of NGN'+str(updateService.budget)+'. Kindly give the Service provider all the details needed to get the job done. thanks</p>',
+                'text': 'Hello, '+client_data.firstname+'!\n Your Job/Service offer has been accepted and you have been debited the sum of NGN'+str(updateService.budget)+'. . Kindly give the Service provider all the details needed to get the job done. thanks',
                 'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': client_data.firstname, 'email': client_data.email}
