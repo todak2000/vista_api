@@ -57,7 +57,7 @@ class Escrow(models.Model):
     job_id = models.TextField(max_length=20,verbose_name="Job ID",null=True)
     client_id = models.TextField(max_length=20,verbose_name="Client ID",null=True)
     sp_id = models.TextField(max_length=20,verbose_name="Service Provider ID",null=True)
-    budget= models.CharField(max_length=500,verbose_name="Client Budget", null=True)
+    budget= models.FloatField(max_length=500,verbose_name="Client Budget", null=True)
     service_type= models.TextField(max_length=500,verbose_name="Type of Services/Job", null=True)
     commission = models.CharField(default=0,max_length=500, verbose_name="Vista's Commission",null=True)
     dispute = models.BooleanField(default=False, verbose_name="Did Client raise dispute")
@@ -73,7 +73,7 @@ class Services(models.Model):
     # Services
     client_id = models.TextField(max_length=20,verbose_name="Client ID",null=True)
     sp_id = models.TextField(max_length=20,verbose_name="Service Provider ID",null=True)
-    budget= models.CharField(max_length=500,verbose_name="Client Budget", null=True)
+    budget= models.FloatField(max_length=500,verbose_name="Client Budget", null=True)
     service_type= models.TextField(max_length=500,verbose_name="Type of Services/Job", null=True)
     sp_reject_id= models.TextField(max_length=500,verbose_name="Service Provider ID who rejected job", null=True)
     
