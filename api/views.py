@@ -1056,14 +1056,21 @@ def client_confirm(request):
         sp_data.engaged =False
         newRatings = (sp_data.ratings + float(ratings))/2
         sp_data.ratings = newRatings
+        newClientBalance = sp_data.walletBalance + float(updateService.budget)* 0.9
+        sp_data.walletBalance = newClientBalance
         sp_data.save()
-        if updateService and sp_data :
+        updateEscrow=Escrow.objects.get(job_id=job_id)
+        updateEscrow.isPaid = True
+        updateEscrow.save()
+        newTransaction = Transaction(from_id="Vista", to_id=sp_data.user_id, transaction_type="Credit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.budget)* 0.9)
+        newTransaction.save()
+        if updateService and sp_data  and updateEscrow and newTransaction:
             # Send mail using SMTP
             mail_subject = sp_data.firstname+'! Vista Job/Service Update'
             email = {
                 'subject': mail_subject,
-                'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have confirmed the Job Completion. Please kindly check your wallet for your earnings</p>',
-                'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have confirmed the Job Completion. Please kindly check your wallet for your earnings',
+                'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+float(updateService.budget)* 0.9+'. Please kindly check your wallet for your earnings</p>',
+                'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+float(updateService.budget)* 0.9+'. Please kindly check your wallet for your earnings',
                 'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': sp_data.firstname, 'email': sp_data.email}
@@ -1091,13 +1098,21 @@ def accept_job(request):
         updateService.isTaken = True
         updateService.save()
         client_data = User.objects.get(user_id=updateService.client_id)
-        if updateService:
+        commission = float(updateService.budget) * 0.1
+        newClientBalance = client_data.walletBalance - float(updateService.budget)
+        client_data.walletBalance = newClientBalance
+        client_data.save()
+        newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,sp_id=sp_id,budget=updateService.budget, service_type=updateService.service_type,commission=commission)
+        newEscrow.save()
+        newTransaction = Transaction(from_id=client_data.user_id, to_id="Vista", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.budget))
+        newTransaction.save()
+        if updateService and client_data and newEscrow and newTransaction:
             # Send mail using SMTP
             mail_subject = client_data.firstname+'! Vista Job/Service Update'
             email = {
                 'subject': mail_subject,
-                'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your Job/Service offer has been accepted. Kindly give the Service provider all the details needed to get the job done. thanks</p>',
-                'text': 'Hello, '+client_data.firstname+'!\n Your Job/Service offer has been accepted. Kindly give the Service provider all the details needed to get the job done. thanks',
+                'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your Job/Service offer has been accepted and you have been debited the sum of NGN'+updateService.budget+'. Kindly give the Service provider all the details needed to get the job done. thanks</p>',
+                'text': 'Hello, '+client_data.firstname+'!\n Your Job/Service offer has been accepted and you have been debited the sum of NGN'+updateService.budget+'. . Kindly give the Service provider all the details needed to get the job done. thanks',
                 'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': client_data.firstname, 'email': client_data.email}
@@ -1129,13 +1144,19 @@ def reject_job(request):
         sp_data.engaged =False
         sp_data.save()
         client_data = User.objects.get(user_id=updateService.client_id)
+
+        newClientBalance = client_data.walletBalance + float(updateService.budget)
+        client_data.walletBalance = newClientBalance
+        client_data.save()
+        newTransaction = Transaction(from_id="Vista", to_id=client_data.user_id, transaction_type="Credit", transaction_message="Refund for Job order-"+job_id, amount=float(updateService.budget))
+        newTransaction.save()
         if updateService and sp_data :
             # Send mail using SMTP
             mail_subject = client_data.firstname+'! Vista Job/Service Update'
             email = {
                 'subject': mail_subject,
-                'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your job offer has been humbly turned down by the Service provider. Kindly check and search for another provider on the Platform. Thanks</p>',
-                'text': 'Hello, '+client_data.firstname+'!\n Your job offer has been humbly turned down by the Service provider. Kindly check and search for another provider on the Platform. Thanks',
+                'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your job offer has been humbly turned down by the Service provider and your money has been refunded. Kindly check and search for another provider on the Platform. Thanks</p>',
+                'text': 'Hello, '+client_data.firstname+'!\n Your job offer has been humbly turned down by the Service provider and your money has been refunded. Kindly check and search for another provider on the Platform. Thanks',
                 'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': client_data.firstname, 'email': client_data.email}

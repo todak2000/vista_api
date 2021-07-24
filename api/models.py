@@ -54,6 +54,7 @@ class Escrow(models.Model):
     class Meta:
         db_table = "Escrow_table"
     # Escrow 
+    job_id = models.TextField(max_length=20,verbose_name="Job ID",null=True)
     client_id = models.TextField(max_length=20,verbose_name="Client ID",null=True)
     sp_id = models.TextField(max_length=20,verbose_name="Service Provider ID",null=True)
     budget= models.CharField(max_length=500,verbose_name="Client Budget", null=True)
