@@ -1128,7 +1128,7 @@ def reject_job(request):
         sp_data = User.objects.get(user_id=sp_id)
         sp_data.engaged =False
         sp_data.save()
-        client_data = User.object.get(user_id=updateService.client_id)
+        client_data = User.objects.get(user_id=updateService.client_id)
         if updateService and sp_data :
             # Send mail using SMTP
             mail_subject = client_data.firstname+'! Vista Job/Service Update'
@@ -1166,7 +1166,7 @@ def complete_job(request):
         # sp_data = User.objects.get(user_id=sp_id)
         # sp_data.engaged =False
         # sp_data.save()
-        client_data = User.object.get(user_id=updateService.client_id)
+        client_data = User.objects.get(user_id=updateService.client_id)
         if updateService:
             # Send mail using SMTP
             mail_subject = client_data.firstname+'! Vista Job/Service Update'
