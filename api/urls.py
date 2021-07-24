@@ -27,4 +27,7 @@ urlpatterns = [
     path('api/v1/job_details/<int:job_id>',views.job_details),
     path('api/v1/client_cancel',views.client_cancel),
     path('api/v1/client_confirm',views.client_confirm),
+
+    path('api/v1/accept_job',views.accept_job), 
+    path('api/v1/reject_job',views.reject_job), 
 ]
