@@ -1060,9 +1060,9 @@ def client_confirm(request):
         newClientBalance = sp_data.walletBalance + fees
         sp_data.walletBalance = newClientBalance
         sp_data.save()
-        updateEscrow=Escrow.objects.get(job_id=job_id)
-        updateEscrow.isPaid = True
-        updateEscrow.save()
+        # updateEscrow=Escrow.objects.get(job_id=job_id)
+        # updateEscrow.isPaid = True
+        # updateEscrow.save()
         newTransaction = Transaction(from_id="Vista", to_id=sp_data.user_id, transaction_type="Credit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.budget)* 0.9)
         newTransaction.save()
         if updateService and sp_data  and updateEscrow and newTransaction:
