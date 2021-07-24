@@ -1131,11 +1131,49 @@ def reject_job(request):
         client_data = User.object.get(user_id=updateService.client_id)
         if updateService and sp_data :
             # Send mail using SMTP
-            mail_subject = sp_data.firstname+'! Vista Job/Service Update'
+            mail_subject = client_data.firstname+'! Vista Job/Service Update'
             email = {
                 'subject': mail_subject,
                 'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your job offer has been humbly turned down by the Service provider. Kindly check and search for another provider on the Platform. Thanks</p>',
                 'text': 'Hello, '+client_data.firstname+'!\n Your job offer has been humbly turned down by the Service provider. Kindly check and search for another provider on the Platform. Thanks',
+                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                'to': [
+                    {'name': client_data.firstname, 'email': client_data.email}
+                ]
+            }
+            SPApiProxy.smtp_send_mail(email)
+            return_data = {
+                "success": True,
+                "status" : 200,
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
+
+@api_view(["POST"])
+def complete_job(request):
+    sp_id = request.data.get("sp_id",None)
+    job_id = request.data.get("job_id",None)
+    try: 
+        updateService = Services.objects.get(id=int(job_id))
+        updateService.isCompleted = True
+        updateService.save()
+
+        # sp_data = User.objects.get(user_id=sp_id)
+        # sp_data.engaged =False
+        # sp_data.save()
+        client_data = User.object.get(user_id=updateService.client_id)
+        if updateService:
+            # Send mail using SMTP
+            mail_subject = client_data.firstname+'! Vista Job/Service Update'
+            email = {
+                'subject': mail_subject,
+                'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your job has been completed by the Service provider. Kindly log on to the Vista app to confirm. Thanks</p>',
+                'text': 'Hello, '+client_data.firstname+'!\n Your job has been completed by the Service provider. Kindly log on to the Vista app to confirm. Thanks',
                 'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': client_data.firstname, 'email': client_data.email}
