@@ -1070,8 +1070,8 @@ def client_confirm(request):
             mail_subject = sp_data.firstname+'! Vista Job/Service Update'
             email = {
                 'subject': mail_subject,
-                'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+float(updateService.budget)* 0.9+'. Please kindly check your wallet for your earnings</p>',
-                'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+float(updateService.budget)* 0.9+'. Please kindly check your wallet for your earnings',
+                'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+fees+'. Please kindly check your wallet for your earnings</p>',
+                'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+fees+'. Please kindly check your wallet for your earnings',
                 'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': sp_data.firstname, 'email': sp_data.email}
