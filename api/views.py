@@ -1065,7 +1065,7 @@ def client_confirm(request):
         # updateEscrow.save()
         newTransaction = Transaction(from_id="Vista", to_id=sp_data.user_id, transaction_type="Credit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.budget)* 0.9)
         newTransaction.save()
-        if updateService and sp_data  and updateEscrow and newTransaction:
+        if updateService and sp_data  and newTransaction:
             # Send mail using SMTP
             mail_subject = sp_data.firstname+'! Vista Job/Service Update'
             email = {
