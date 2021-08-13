@@ -28,6 +28,9 @@ class User(models.Model):
     engaged = models.BooleanField(default=False, verbose_name="Is the SP currently doing a job")
     date_added = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return f"{self.user_id} - {self.user_online} - {self.service} - {self.engaged} {self.email} - {self.address}- {self.state}"
+
 class otp(models.Model):
     class Meta:
         db_table = "OTP_Code"
