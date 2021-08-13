@@ -829,7 +829,7 @@ def fund(request):
 def service_request(request):
     user_phone = request.data.get("phone",None)
     service_type = request.data.get("service_type",None)
-    service_form= request.data.get("service_form:",None)
+    service_form= request.data.get("service_form",None)
     address = request.data.get("address",None)
     amount = request.data.get("amount",None)
     payment_mode = request.data.get("payment_mode",None)
@@ -1327,4 +1327,27 @@ def artisans(request):
             "status" : 201,
             "message": str(e)
         }
+    return Response(return_data)
+
+@api_view(["GET"])
+def notification(request):
+    try:
+        email = request.data.get("email",None)
+    
+        sp = User.objects.get(email=email)
+        if sp.user_online == True and sp.engaged == False:
+
+            check = Services.objects.filter(sp_id=sp.user_id,isTaken=False, isCompleted=False)
+            if check == 1:
+                return_data = {
+                "success": True,
+                "status" : 200,
+                "message": "You have a new request"
+                }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 202,
+            "message": str(e)
+            }
     return Response(return_data)
