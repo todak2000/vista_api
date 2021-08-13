@@ -1340,6 +1340,9 @@ def notification(request):
             return_data = {
             "success": True,
             "status" : 200,
+            "sp_online": sp.user_online,
+            "sp_engage":sp.engaged,
+            "check": check.sp_id,
             "message": "You have a new request"
             }
         else:
