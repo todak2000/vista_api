@@ -1349,12 +1349,16 @@ def notification(request):
             return_data = {
             "success": False,
             "status" : 202,
+            "sp_online": sp.user_online,
+        "sp_engage":sp.engaged,
             "message": "No Notification"
             }
     else:
         return_data = {
         "success": False,
         "status" : 202,
+        "sp_online": sp.user_online,
+        "sp_engage":sp.engaged,
         "message": "SP not online"
         }
     return Response(return_data)
