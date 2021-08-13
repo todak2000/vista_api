@@ -1209,3 +1209,93 @@ def complete_job(request):
             "message": str(e)
         }
     return Response(return_data)
+
+
+    # Admin section APis
+@api_view(["GET"])
+def clients(request):
+    try: 
+        clients_data = User.objects.filter(role="1")
+        num = len(clients_data)
+        clientsList = []
+        if num > 0:
+            for i in range(0,num):
+                user_id = clients_data[i].user_id
+                name  = clients_data[i].firstname +" "+ clients_data[i].lastname 
+                email  = clients_data[i].email 
+                phone = clients_data[i].phone
+                walletBalance = clients_data[i].walletBalance
+                address = clients_data[i].address +" "+ clients_data[i].state
+
+                to_json = {
+                    "user_id": user_id,
+                    "name": name,
+                    "email": email,
+                    "phone": phone,
+                    "wallet_balance": walletBalance,
+                    "address": address
+                }
+                clientsList.append(to_json)
+        else:
+            clientsList = ["There are no clients in the database for now!."]
+        return_data = {
+            "success": True,
+            "status" : 200,
+            "message": "Successfull",
+            "clients": clientsList,
+        }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
+
+@api_view(["GET"])
+def artisans(request):
+    try: 
+        artisans_data = User.objects.filter(role="0")
+        num = len(artisans_data)
+        artisansList = []
+        if num > 0:
+            for i in range(0,num):
+                user_id = artisans_data[i].user_id
+                name  = artisans_data[i].firstname +" "+ artisans_data[i].lastname 
+                email  = artisans_data[i].email 
+                phone = artisans_data[i].phone
+                walletBalance = artisans_data[i].walletBalance
+                address = artisans_data[i].address +" "+ artisans_data[i].state
+                ratings = artisans_data[i].ratings
+                account_name = artisans_data[i].account_name
+                account_number = artisans_data[i].account_number 
+                bank_name = artisans_data[i].bank_name
+
+                to_json = {
+                    "user_id": user_id,
+                    "name": name,
+                    "email": email,
+                    "phone": phone,
+                    "wallet_balance": walletBalance,
+                    "address": address,
+                    "ratings":ratings,
+                    "account_name": account_name,
+                    "account_number": account_number,
+                    "bank_name":bank_name
+                }
+                artisansList.append(to_json)
+        else:
+            artisansList = ["There are no artisans in the database for now!."]
+        return_data = {
+            "success": True,
+            "status" : 200,
+            "message": "Successfull",
+            "clients": artisansList,
+        }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)

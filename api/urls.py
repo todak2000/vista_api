@@ -31,4 +31,8 @@ urlpatterns = [
     path('api/v1/accept_job',views.accept_job), 
     path('api/v1/reject_job',views.reject_job), 
     path('api/v1/complete_job',views.complete_job), 
+
+    # Admin
+    path('api/v1/clients',views.clients), 
+    path('api/v1/artisans',views.artisans), 
 ]
