@@ -89,4 +89,4 @@ class Services(models.Model):
     date_added = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"{self.client_id} - {self.sp_id} - {self.budget} - {self.service_type} {self.isTaken} - {self.isRejectedSP}"
+        return f"{self.client_id} - {self.sp_id} - {self.amount} - {self.service_type} {self.isTaken} - {self.isRejectedSP}"
