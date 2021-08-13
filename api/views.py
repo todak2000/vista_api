@@ -1330,8 +1330,8 @@ def artisans(request):
     return Response(return_data)
 
 @api_view(["GET"])
-def notification(request):
-    email = request.data.get("email",None)
+def notification(request, email):
+    # email = request.data.get("email",None)
 
     sp = User.objects.get(email=email)
     if sp.user_online == True and sp.engaged == True:

@@ -35,5 +35,5 @@ urlpatterns = [
     # Admin
     path('api/v1/clients',views.clients), 
     path('api/v1/artisans',views.artisans), 
-    path('api/v1/notification',views.notification),
+    path('api/v1/notification/<email>',views.notification),
 ]
