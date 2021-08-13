@@ -1334,8 +1334,8 @@ def notification(request):
     email = request.data.get("email",None)
 
     sp = User.objects.get(email=email)
-    if sp.user_online == True and sp.engaged == False:
-        check = Services.objects.filter(service_type=sp.service,isTaken=False, isCompleted=False)
+    if sp.user_online == True and sp.engaged == True:
+        check = Services.objects.filter(sp_id=sp.user_id,isTaken=False, isCompleted=False)
         if check == 1:
             return_data = {
             "success": True,
