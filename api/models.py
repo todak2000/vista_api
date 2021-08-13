@@ -23,6 +23,7 @@ class User(models.Model):
     # compliance with vista's terms and condition
     profile_complete = models.BooleanField(default=False)
     terms_conditions = models.BooleanField(default=False)
+    user_online = models.BooleanField(default=False)
     service= models.TextField(max_length=150,verbose_name="Service Rendered",null=True)
     engaged = models.BooleanField(default=False, verbose_name="Is the SP currently doing a job")
     date_added = models.DateTimeField(default=timezone.now)
@@ -73,12 +74,14 @@ class Services(models.Model):
     # Services
     client_id = models.TextField(max_length=20,verbose_name="Client ID",null=True)
     sp_id = models.TextField(max_length=20,verbose_name="Service Provider ID",null=True)
-    budget= models.FloatField(max_length=500,verbose_name="Client Budget", null=True)
+    amount= models.FloatField(max_length=500,verbose_name="Service Charge", null=True)
     service_type= models.TextField(max_length=500,verbose_name="Type of Services/Job", null=True)
     sp_reject_id= models.TextField(max_length=500,verbose_name="Service Provider ID who rejected job", null=True)
     
-    details= models.CharField(max_length=500,verbose_name="Job/Service Details", null=True)
-    tools= models.CharField(max_length=500,verbose_name="Tools required for the Job/Service", null=True)
+    service_form= models.CharField(max_length=500,verbose_name="Service Type/form", null=True)
+    address= models.CharField(max_length=500,verbose_name="Address", null=True)
+    payment_mode= models.CharField(max_length=500,verbose_name="Payment Mode", null=True)
+    description= models.CharField(max_length=10500,verbose_name="Description", null=True)
 
     isTaken = models.BooleanField(default=False, verbose_name="is the Job taken by an SP")
     isRejectedSP = models.BooleanField(default=False, verbose_name="Did the first SP rejected the Job")

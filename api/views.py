@@ -379,6 +379,31 @@ def change_password(request):
 
 #SIGNIN API
 @api_view(["POST"])
+def offline(request):
+    try:
+        email = request.data.get("email",None)
+
+        if not None in email and not '' in email:
+            validate_mail = validator.checkmail(email)
+            if validate_mail == True:
+                if User.objects.filter(email =email).exists() == True:
+                    user_data = User.objects.get(email=email)
+                    user_data.user_online = False
+                    user_data.save()
+                    return_data = {
+                        "success": True,
+                        "status" : 200,
+                        "message": "User now offline"
+                    }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 202,
+            "message": str(e)
+        }
+    return Response(return_data)
+#SIGNIN API
+@api_view(["POST"])
 def signin(request):
     try:
         email = request.data.get("email",None)
@@ -395,6 +420,8 @@ def signin(request):
                     }
                 else:
                     user_data = User.objects.get(email=email)
+                    user_data.user_online = True
+                    user_data.save()
                     is_valid_password = password_functions.check_password_match(password,user_data.password)
                     is_verified = otp.objects.get(user__phone=user_data.phone).validated
                     #Generate token
@@ -446,8 +473,8 @@ def signin(request):
             return Response(return_data)
     except Exception as e:
         return_data = {
-            "success": True,
-            "status" : 200,
+            "success": False,
+            "status" : 202,
             "message": str(e)
         }
     return Response(return_data)
@@ -802,12 +829,14 @@ def fund(request):
 def service_request(request):
     user_phone = request.data.get("phone",None)
     service_type = request.data.get("service_type",None)
-    tools= request.data.get("tools",None)
-    budget = request.data.get("budget",None)
-    details = request.data.get("details",None)
+    service_form= request.data.get("service_form:",None)
+    address = request.data.get("address",None)
+    amount = request.data.get("amount",None)
+    payment_mode = request.data.get("payment_mode",None)
+    description = request.data.get("description",None)
     try: 
         client_data = User.objects.get(phone=user_phone)
-        serviceProviders=User.objects.filter(role='0',state=client_data.state, service=service_type, engaged=False).order_by('-date_added')[:5]
+        serviceProviders=User.objects.filter(role='0',state=client_data.state, service=service_type, engaged=False, user_online=True).order_by('-date_added')[:5]
         num = len(serviceProviders)
         serviceProvidersList = []
         for i in range(0,num):
@@ -831,7 +860,7 @@ def service_request(request):
             }
             serviceProvidersList.append(to_json)
         if num > 0:
-            newService = Services(client_id=client_data.user_id, budget=budget, service_type=service_type, details=details, tools=tools)
+            newService = Services(client_id=client_data.user_id, amount=amount, service_type=service_type, service_form=service_form, address=address, payment_mode=payment_mode,description=description)
             newService.save()
             return_data = {
                 "success": True,
