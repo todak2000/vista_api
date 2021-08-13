@@ -1336,20 +1336,20 @@ def notification(request):
     sp = User.objects.get(email=email)
     if sp.user_online == True and sp.engaged == True:
         check = Services.objects.filter(sp_id=sp.user_id,isTaken=False, isCompleted=False)
-        if check == 1:
+        if len(check) == 1:
             return_data = {
             "success": True,
             "status" : 200,
             "sp_online": sp.user_online,
             "sp_engage":sp.engaged,
-            "check": check.sp_id,
+            "check": len(check),
             "message": "You have a new request"
             }
         else:
             return_data = {
             "success": False,
             "status" : 202,
-            "check": check.sp_id,
+            "check": len(check),
             "sp_online": sp.user_online,
             "sp_engage":sp.engaged,
             "message": "No Notification"
