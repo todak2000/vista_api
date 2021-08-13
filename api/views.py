@@ -1331,23 +1331,27 @@ def artisans(request):
 
 @api_view(["GET"])
 def notification(request):
-    try:
-        email = request.data.get("email",None)
-    
-        sp = User.objects.get(email=email)
-        if sp.user_online == True and sp.engaged == False:
+    email = request.data.get("email",None)
 
-            check = Services.objects.filter(sp_id=sp.user_id,isTaken=False, isCompleted=False)
-            if check == 1:
-                return_data = {
-                "success": True,
-                "status" : 200,
-                "message": "You have a new request"
-                }
-    except Exception as e:
-        return_data = {
+    sp = User.objects.get(email=email)
+    if sp.user_online == True and sp.engaged == False:
+        check = Services.objects.filter(sp_id=sp.user_id,isTaken=False, isCompleted=False)
+        if check == 1:
+            return_data = {
+            "success": True,
+            "status" : 200,
+            "message": "You have a new request"
+            }
+        else:
+            return_data = {
             "success": False,
             "status" : 202,
-            "message": str(e)
+            "message": "No Notification"
             }
+    else:
+        return_data = {
+        "success": False,
+        "status" : 202,
+        "message": "SP not online"
+        }
     return Response(return_data)
