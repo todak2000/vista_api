@@ -4,7 +4,7 @@ import json
 import requests
 import jwt
 from django.db.models import Q, Sum
-from api.models import (User, otp, Transaction, Escrow, Services)
+from api.models import (User, otp, Transaction, Escrow, Services, ServiceCategory)
 from CustomCode import (autentication, password_functions,
                         string_generator, validator)
 # from django.db.models import Sum
@@ -831,6 +831,8 @@ def service_request(request):
     service_type = request.data.get("service_type",None)
     service_form= request.data.get("service_form",None)
     address = request.data.get("address",None)
+    unit= request.data.get("unit",None)
+    specific_service = request.data.get("specific_service",None)
     amount = request.data.get("amount",None)
     payment_mode = request.data.get("payment_mode",None)
     description = request.data.get("description",None)
@@ -860,7 +862,7 @@ def service_request(request):
             }
             serviceProvidersList.append(to_json)
         if num > 0:
-            newService = Services(client_id=client_data.user_id, amount=amount, service_type=service_type, service_form=service_form, address=address, payment_mode=payment_mode,description=description)
+            newService = Services(client_id=client_data.user_id, amount=amount, service_type=service_type, service_form=service_form, address=address, payment_mode=payment_mode,description=description, specific_service=specific_service, unit=unit)
             newService.save()
             return_data = {
                 "success": True,
@@ -1363,3 +1365,39 @@ def notification(request, email):
         "message": "SP not online"
         }
     return Response(return_data)
+
+@api_view(["GET"])
+def service_list(request):
+    service_type = request.data.get("service_type",None)
+    try:
+        serv_list = ServiceCategory.objects.filter(service=service_type)
+        num = len(serv_list)
+        servList = []
+        if num > 0:
+            for i in range(0,num):
+                service = serv_list[i].service
+                type  = serv_list[i].type
+                amount  = serv_list[i].amount
+               
+
+                to_json = {
+                    "service": service,
+                    "type": type,
+                    "amount": amount,
+                }
+                servList.append(to_json)
+        else:
+            servList = ["There are no service list for "+str(service_type)+" in the database for now!."]
+        return_data = {
+            "success": True,
+            "status" : 200,
+            "message": "Successfull",
+            "clients": servList,
+        }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)   

@@ -85,7 +85,8 @@ class Services(models.Model):
     address= models.CharField(max_length=500,verbose_name="Address", null=True)
     payment_mode= models.CharField(max_length=500,verbose_name="Payment Mode", null=True)
     description= models.CharField(max_length=10500,verbose_name="Description", null=True)
-
+    specific_service = models.CharField(max_length=500,verbose_name="Exact Service", null=True)
+    unit= models.CharField(max_length=500,verbose_name="Quantity/Unit per Service", null=True)
     isTaken = models.BooleanField(default=False, verbose_name="is the Job taken by an SP")
     isRejectedSP = models.BooleanField(default=False, verbose_name="Did the first SP rejected the Job")
     isCompleted = models.BooleanField(default=False, verbose_name="Did SP finish the Job")
@@ -93,3 +94,16 @@ class Services(models.Model):
 
     def __str__(self):
         return f"{self.client_id} - {self.sp_id} - {self.amount} - {self.service_type} {self.isTaken} - {self.isRejectedSP}"
+
+class ServiceCategory(models.Model):
+    class Meta:
+        db_table = "Service Category and Pricing"
+    # Service Category and Pricing
+    service= models.TextField(max_length=500,verbose_name="Service", null=True)
+    type = models.CharField(max_length=500,verbose_name="Type of Services", null=True)
+    amount = models.FloatField(verbose_name="Price/Unit Service",null=True)
+
+    date_added = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.service} - {self.type} - {self.amount} "
