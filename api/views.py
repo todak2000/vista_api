@@ -1371,6 +1371,7 @@ def service_list(request):
     service_type = request.data.get("service_type",None)
     try:
         serv_list = ServiceCategory.objects.filter(service=service_type)
+        if serv_list
         num = len(serv_list)
         servList = []
         if num > 0:
@@ -1392,12 +1393,12 @@ def service_list(request):
             "success": True,
             "status" : 200,
             "message": "Successfull",
-            "clients": servList,
+            "list": servList,
         }
-    except Exception as e:
+    except serv_list.DoesNotExist:
         return_data = {
             "success": False,
             "status" : 201,
-            "message": str(e)
+            "list": "There is no "+str(service_type)+" in the database for now!."
         }
     return Response(return_data)   
