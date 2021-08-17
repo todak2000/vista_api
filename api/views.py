@@ -1368,7 +1368,6 @@ def notification(request, email):
 
 @api_view(["GET"])
 def service_list(request, service_type):
-    # service_type = request.data.get("service_type",None)
     try:
         serv_list = ServiceCategory.objects.filter(service=service_type)
         num = len(serv_list)
@@ -1378,8 +1377,6 @@ def service_list(request, service_type):
                 service = serv_list[i].service
                 type  = serv_list[i].type
                 amount  = serv_list[i].amount
-               
-
                 to_json = {
                     "service": service,
                     "type": type,
@@ -1392,7 +1389,7 @@ def service_list(request, service_type):
             "success": True,
             "status" : 200,
             "message": "Successfull",
-            "clients": servList,
+            "list": servList,
         }
     except Exception as e:
         return_data = {
