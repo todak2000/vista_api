@@ -36,5 +36,5 @@ urlpatterns = [
     path('api/v1/clients',views.clients), 
     path('api/v1/artisans',views.artisans), 
     path('api/v1/notification/<email>',views.notification),
-    path('api/v1/service_list',views.service_list), 
+    path('api/v1/service_list/<service_type>',views.service_list), 
 ]

@@ -1367,8 +1367,8 @@ def notification(request, email):
     return Response(return_data)
 
 @api_view(["GET"])
-def service_list(request):
-    service_type = request.data.get("service_type",None)
+def service_list(request, service_type):
+    # service_type = request.data.get("service_type",None)
     try:
         serv_list = ServiceCategory.objects.filter(service=service_type)
         num = len(serv_list)
