@@ -1121,8 +1121,8 @@ def client_confirm(request):
             "success": False,
             "status" : 201,
             "message": str(e),
-            "fees": fees,
-            "newBalance": newClientBalance
+            # "fees": fees,
+            # "newBalance": newClientBalance
         }
     return Response(return_data)
 
