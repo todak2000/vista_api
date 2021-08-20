@@ -1004,6 +1004,7 @@ def job_details(request, job_id):
                 "amount": job_data.amount,
                 "isTaken": job_data.isTaken,
                 "sp_phone": sp_data.phone,
+                "client_phone": client_data.phone,
                 "clientAddress": client_data.address+ " "+client_data.state ,
                 "service_type": job_data.service_type,
                 "isRejectedSP": job_data.isRejectedSP,
@@ -1181,10 +1182,10 @@ def reject_job(request):
         sp_data.save()
         client_data = User.objects.get(user_id=updateService.client_id)
 
-        newClientBalance = client_data.walletBalance + float(updateService.budget)
+        newClientBalance = client_data.walletBalance + float(updateService.amount)
         client_data.walletBalance = newClientBalance
         client_data.save()
-        newTransaction = Transaction(from_id="Vista", to_id=client_data.user_id, transaction_type="Credit", transaction_message="Refund for Job order-"+job_id, amount=float(updateService.budget))
+        newTransaction = Transaction(from_id="Vista", to_id=client_data.user_id, transaction_type="Credit", transaction_message="Refund for Job order-"+job_id, amount=float(updateService.amount))
         newTransaction.save()
         if updateService and sp_data :
             # Send mail using SMTP
