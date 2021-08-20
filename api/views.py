@@ -1134,21 +1134,21 @@ def accept_job(request):
         updateService.isTaken = True
         updateService.save()
         client_data = User.objects.get(user_id=updateService.client_id)
-        commission = float(updateService.budget) * 0.1
-        newClientBalance = client_data.walletBalance - float(updateService.budget)
+        commission = float(updateService.amount) * 0.1
+        newClientBalance = client_data.walletBalance - float(updateService.amount)
         client_data.walletBalance = newClientBalance
         client_data.save()
-        newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,sp_id=sp_id,budget=updateService.budget, service_type=updateService.service_type,commission=commission)
+        newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,sp_id=sp_id,budget=updateService.amount, service_type=updateService.service_type,commission=commission)
         newEscrow.save()
-        newTransaction = Transaction(from_id=client_data.user_id, to_id="Vista", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.budget))
+        newTransaction = Transaction(from_id=client_data.user_id, to_id="Vista", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount))
         newTransaction.save()
         if updateService and client_data and newEscrow and newTransaction:
             # Send mail using SMTP
             mail_subject = client_data.firstname+'! Vista Job/Service Update'
             email = {
                 'subject': mail_subject,
-                'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your Job/Service offer has been accepted and you have been debited the sum of NGN'+str(updateService.budget)+'. Kindly give the Service provider all the details needed to get the job done. thanks</p>',
-                'text': 'Hello, '+client_data.firstname+'!\n Your Job/Service offer has been accepted and you have been debited the sum of NGN'+str(updateService.budget)+'. . Kindly give the Service provider all the details needed to get the job done. thanks',
+                'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your Job/Service offer has been accepted and you have been debited the sum of NGN'+str(updateService.amount)+'. Kindly give the Service provider all the details needed to get the job done. thanks</p>',
+                'text': 'Hello, '+client_data.firstname+'!\n Your Job/Service offer has been accepted and you have been debited the sum of NGN'+str(updateService.amount)+'. . Kindly give the Service provider all the details needed to get the job done. thanks',
                 'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': client_data.firstname, 'email': client_data.email}
