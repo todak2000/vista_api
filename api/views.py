@@ -1148,8 +1148,8 @@ def accept_job(request):
             mail_subject = client_data.firstname+'! Vista Job/Service Update'
             email = {
                 'subject': mail_subject,
-                'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your Job/Service offer has been accepted and you have been debited the sum of NGN'+str(updateService.amount)+'. Kindly give the Service provider all the details needed to get the job done. thanks</p>',
-                'text': 'Hello, '+client_data.firstname+'!\n Your Job/Service offer has been accepted and you have been debited the sum of NGN'+str(updateService.amount)+'. . Kindly give the Service provider all the details needed to get the job done. thanks',
+                'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your Job/Service offer has been accepted . Kindly give the Service provider all the details needed to get the job done. thanks</p>',
+                'text': 'Hello, '+client_data.firstname+'!\n Your Job/Service offer has been accepted. Kindly give the Service provider all the details needed to get the job done. thanks',
                 'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': client_data.firstname, 'email': client_data.email}
