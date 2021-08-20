@@ -1090,14 +1090,14 @@ def client_confirm(request):
         sp_data.engaged =False
         newRatings = (sp_data.ratings + float(ratings))/2
         sp_data.ratings = newRatings
-        fees = (updateService.budget* 0.9)
+        fees = (updateService.amount* 0.9)
         newClientBalance = sp_data.walletBalance + fees
         sp_data.walletBalance = newClientBalance
         sp_data.save()
         # updateEscrow=Escrow.objects.get(job_id=job_id)
         # updateEscrow.isPaid = True
         # updateEscrow.save()
-        newTransaction = Transaction(from_id="Vista", to_id=sp_data.user_id, transaction_type="Credit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.budget)* 0.9)
+        newTransaction = Transaction(from_id="Vista", to_id=sp_data.user_id, transaction_type="Credit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount)* 0.9)
         newTransaction.save()
         if updateService and sp_data  and newTransaction:
             # Send mail using SMTP
