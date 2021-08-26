@@ -1091,14 +1091,15 @@ def client_confirm(request):
         updateService.save()
 
         sp_data = User.objects.get(user_id=sp_id)
-        sp_data.engaged =False
+        sp_data.engaged = False
         newRatings = (sp_data.ratings + float(ratings))/2
         sp_data.ratings = newRatings
+        sp_data.save()
         fees = (updateService.amount* 0.9)
         if updateService.payment_mode == "wallet":
             newClientBalance = sp_data.walletBalance + fees
             sp_data.walletBalance = newClientBalance
-        sp_data.save()
+            sp_data.save()
         # updateEscrow=Escrow.objects.get(job_id=job_id)
         # updateEscrow.isPaid = True
         # updateEscrow.save()
@@ -1154,18 +1155,24 @@ def accept_job(request):
     job_id = request.data.get("job_id",None)
     try: 
         updateService = Services.objects.get(id=int(job_id))
-        updateService.isTaken = True
-        updateService.save()
-        client_data = User.objects.get(user_id=updateService.client_id)
         if updateService.payment_mode == "wallet":
+            updateService.isTaken = True
+            updateService.save()
+            client_data = User.objects.get(user_id=updateService.client_id)
             commission = float(updateService.amount) * 0.1
             newClientBalance = client_data.walletBalance - float(updateService.amount)
             client_data.walletBalance = newClientBalance
             client_data.save()
             newTransaction = Transaction(from_id=client_data.user_id, to_id="Vista", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount))
             newTransaction.save()
-        newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,sp_id=sp_id,budget=updateService.amount, service_type=updateService.service_type,commission=commission, payment_mode = updateService.payment_mode)
-        newEscrow.save()
+            newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,sp_id=sp_id,budget=updateService.amount, service_type=updateService.service_type,commission=commission, payment_mode = updateService.payment_mode)
+            newEscrow.save()
+        if updateService.payment_mode == "cash":
+            updateService.isTaken = True
+            updateService.save()
+            client_data = User.objects.get(user_id=updateService.client_id)
+            newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,sp_id=sp_id,budget=updateService.amount, service_type=updateService.service_type,commission=commission, payment_mode = updateService.payment_mode)
+            newEscrow.save()
         
         if updateService and newEscrow and client_data :
             # Send mail using SMTP
@@ -1360,8 +1367,6 @@ def artisans(request):
 
 @api_view(["GET"])
 def notification(request, email):
-    # email = request.data.get("email",None)
-
     sp = User.objects.get(email=email)
     if sp.user_online == True and sp.engaged == True:
         check = Services.objects.filter(sp_id=sp.user_id,isTaken=False, isCompleted=False)
