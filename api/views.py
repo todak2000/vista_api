@@ -486,8 +486,6 @@ def signin(request):
 @autentication.token_required
 def dashboard(request,decrypedToken):
     token = request.session['token']
-    print("Here is the token:")
-    print(token)
     try:
         if request.session['token']:
             user_id = decrypedToken['user_id']
@@ -546,6 +544,7 @@ def dashboard(request,decrypedToken):
         return_data = {
             "success": False,
             "status" : 201,
+            "token": token,
             "message": str(e)
         }
     return Response(return_data)
