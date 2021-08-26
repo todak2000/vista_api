@@ -485,7 +485,9 @@ def signin(request):
 @api_view(["GET"])
 @autentication.token_required
 def dashboard(request,decrypedToken):
-    # token = request.session['token']
+    token = request.session['token']
+    print("Here is the token:")
+    print(token)
     try:
         if request.session['token']:
             user_id = decrypedToken['user_id']
