@@ -485,8 +485,9 @@ def signin(request):
 @api_view(["GET"])
 @autentication.token_required
 def dashboard(request,decrypedToken):
+    token = request.session['token']
     try:
-        if 'token' in request.session:
+        if token:
             user_id = decrypedToken['user_id']
             if user_id != None and user_id != '':
                 #get user info
@@ -537,6 +538,7 @@ def dashboard(request,decrypedToken):
             return_data = {
                 "success": True,
                 "status" : 211,
+                "token": token,
                 "message": "User not authorised to view this page. Kindly login"
             }
     except Exception as e:
