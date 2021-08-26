@@ -84,6 +84,7 @@ def signup(request):
                            "validated": validated,
                            "exp":timeLimit}
                 token = jwt.encode(payload,settings.SECRET_KEY)
+                
                 # Send mail using SMTP
                 mail_subject = 'Activate your Vista account.'
                 email = {
@@ -430,6 +431,7 @@ def signin(request):
                                "validated": is_verified,
                                "exp":timeLimit}
                     token = jwt.encode(payload,settings.SECRET_KEY)
+                    request.session['token'] = token.decode('UTF-8')
                     if is_valid_password and is_verified:
                         return_data = {
                             "success": True,
@@ -483,51 +485,58 @@ def signin(request):
 @autentication.token_required
 def dashboard(request,decrypedToken):
     try:
-        user_id = decrypedToken['user_id']
-        if user_id != None and user_id != '':
-            #get user info
-            user_data = User.objects.get(user_id=decrypedToken["user_id"])
-            userTransactions=Transaction.objects.filter(Q(from_id__icontains=user_id) | Q(to_id__icontains=user_id)).order_by('-date_added')[:20]
-            num = len(userTransactions)
-            userTransactionsList = []
-            for i in range(0,num):
-                date_added = userTransactions[i].date_added
-                transaction_type  = userTransactions[i].transaction_type
-                amount  = userTransactions[i].amount 
-                transaction_message = userTransactions[i].transaction_message
-                to_json = {
-                    "transaction_type": transaction_type,
-                    "transaction_message": transaction_message,
-                    "amount": amount,
-                    "date_added": date_added.strftime('%Y-%m-%d')
-                }
-                userTransactionsList.append(to_json)
-            return_data = {
-                "success": True,
-                "status" : 200,
-                "message": "Successfull",
-                "transaction": userTransactionsList,
-                "user_details": 
-                    {
-                        "firstname": f"{user_data.firstname}",
-                        "lastname": f"{user_data.lastname}",
-                        "email": f"{user_data.email}",
-                        "phonenumber": f"{user_data.phone}",
-                        "address": f"{user_data.address}",
-                        "state": f"{user_data.state}",
-                        "role": f"{user_data.role}",
-                        "balance": f"{user_data.walletBalance}",
-                        "accountname": f"{user_data.account_name}",
-                        "accountno": f"{user_data.account_number}",
-                        "bank": f"{user_data.bank_name}",
-                        "service": f"{user_data.service}",
+        if 'token' in request.session:
+            user_id = decrypedToken['user_id']
+            if user_id != None and user_id != '':
+                #get user info
+                user_data = User.objects.get(user_id=decrypedToken["user_id"])
+                userTransactions=Transaction.objects.filter(Q(from_id__icontains=user_id) | Q(to_id__icontains=user_id)).order_by('-date_added')[:20]
+                num = len(userTransactions)
+                userTransactionsList = []
+                for i in range(0,num):
+                    date_added = userTransactions[i].date_added
+                    transaction_type  = userTransactions[i].transaction_type
+                    amount  = userTransactions[i].amount 
+                    transaction_message = userTransactions[i].transaction_message
+                    to_json = {
+                        "transaction_type": transaction_type,
+                        "transaction_message": transaction_message,
+                        "amount": amount,
+                        "date_added": date_added.strftime('%Y-%m-%d')
                     }
-            }
+                    userTransactionsList.append(to_json)
+                return_data = {
+                    "success": True,
+                    "status" : 200,
+                    "message": "Successfull",
+                    "transaction": userTransactionsList,
+                    "user_details": 
+                        {
+                            "firstname": f"{user_data.firstname}",
+                            "lastname": f"{user_data.lastname}",
+                            "email": f"{user_data.email}",
+                            "phonenumber": f"{user_data.phone}",
+                            "address": f"{user_data.address}",
+                            "state": f"{user_data.state}",
+                            "role": f"{user_data.role}",
+                            "balance": f"{user_data.walletBalance}",
+                            "accountname": f"{user_data.account_name}",
+                            "accountno": f"{user_data.account_number}",
+                            "bank": f"{user_data.bank_name}",
+                            "service": f"{user_data.service}",
+                        }
+                }
+            else:
+                return_data = {
+                    "success": False,
+                    "status" : 201,
+                    "message": "Invalid Parameter"
+                }
         else:
             return_data = {
-                "success": False,
-                "status" : 201,
-                "message": "Invalid Parameter"
+                "success": True,
+                "status" : 211,
+                "message": "User not authorised to view this page. Kindly login"
             }
     except Exception as e:
         return_data = {
