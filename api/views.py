@@ -1095,21 +1095,39 @@ def client_confirm(request):
         newRatings = (sp_data.ratings + float(ratings))/2
         sp_data.ratings = newRatings
         fees = (updateService.amount* 0.9)
-        newClientBalance = sp_data.walletBalance + fees
-        sp_data.walletBalance = newClientBalance
+        if updateService.payment_mode == "wallet":
+            newClientBalance = sp_data.walletBalance + fees
+            sp_data.walletBalance = newClientBalance
         sp_data.save()
         # updateEscrow=Escrow.objects.get(job_id=job_id)
         # updateEscrow.isPaid = True
         # updateEscrow.save()
         newTransaction = Transaction(from_id="Vista", to_id=sp_data.user_id, transaction_type="Credit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount)* 0.9)
         newTransaction.save()
-        if updateService and sp_data  and newTransaction:
+        if updateService and sp_data  and newTransaction and updateService.payment_mode == "wallet":
             # Send mail using SMTP
             mail_subject = sp_data.firstname+'! Vista Job/Service Update'
             email = {
                 'subject': mail_subject,
                 'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+str(fees)+'. Please kindly check your wallet for your earnings</p>',
                 'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+str(fees)+'. Please kindly check your wallet for your earnings',
+                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                'to': [
+                    {'name': sp_data.firstname, 'email': sp_data.email}
+                ]
+            }
+            SPApiProxy.smtp_send_mail(email)
+            return_data = {
+                "success": True,
+                "status" : 200,
+            }
+        if updateService and sp_data  and newTransaction and updateService.payment_mode == "cash":
+            # Send mail using SMTP
+            mail_subject = sp_data.firstname+'! Vista Job/Service Update'
+            email = {
+                'subject': mail_subject,
+                'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have confirmed the Job Completion and you have collected the cash of sum of NGN'+str(updateService.amount)+'. Admin will reach out figure out collection of our commision from you. Your cooperation is highly appreciated.</p>',
+                'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+str(updateService.amount)+'. Admin will reach out figure out collection of our commision from you. Your cooperation is highly appreciated.',
                 'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': sp_data.firstname, 'email': sp_data.email}

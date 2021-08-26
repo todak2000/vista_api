@@ -70,7 +70,7 @@ class Escrow(models.Model):
     date_added = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"{self.client_id} - {self.artisan_id} - {self.fees_agreed} - {self.project_id} {self.dispute} - {self.isPaid} - {self.payment_mode}"
+        return f"{self.client_id} - {self.sp_id}  - {self.job_id} - {self.dispute} - {self.isPaid} - {self.payment_mode}"
 
 class Services(models.Model):
     class Meta:
