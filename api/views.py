@@ -1407,3 +1407,26 @@ def service_list(request, service_type):
             "message": str(e)
         }
     return Response(return_data)   
+
+
+@api_view(["POST"])
+def cash_collected(request, job_id):
+    updateService = Services.objects.get(id=int(job_id))
+    updateService.isCompleted = True
+    updateService.save()
+    updateEscrow = Escrow.objects.get(job_id=int(job_id))
+    updateEscrow.isPaid = True
+    updateEscrow.save()
+    if updateService and updateEscrow:
+        return_data = {
+        "success": True,
+        "status" : 200,
+        "message": "Cash payment confirmed"
+        }
+    else:
+        return_data = {
+        "success": False,
+        "status" : 202,
+        "message": "Something went wrong"
+        }
+    return Response(return_data)
