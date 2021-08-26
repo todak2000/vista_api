@@ -1138,16 +1138,18 @@ def accept_job(request):
         updateService = Services.objects.get(id=int(job_id))
         updateService.isTaken = True
         updateService.save()
-        client_data = User.objects.get(user_id=updateService.client_id)
-        commission = float(updateService.amount) * 0.1
-        newClientBalance = client_data.walletBalance - float(updateService.amount)
-        client_data.walletBalance = newClientBalance
-        client_data.save()
-        newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,sp_id=sp_id,budget=updateService.amount, service_type=updateService.service_type,commission=commission)
+        if updateService.payment_mode == "wallet":
+            client_data = User.objects.get(user_id=updateService.client_id)
+            commission = float(updateService.amount) * 0.1
+            newClientBalance = client_data.walletBalance - float(updateService.amount)
+            client_data.walletBalance = newClientBalance
+            client_data.save()
+            newTransaction = Transaction(from_id=client_data.user_id, to_id="Vista", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount))
+            newTransaction.save()
+        newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,sp_id=sp_id,budget=updateService.amount, service_type=updateService.service_type,commission=commission, payment_mode = updateService.payment_mode)
         newEscrow.save()
-        newTransaction = Transaction(from_id=client_data.user_id, to_id="Vista", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount))
-        newTransaction.save()
-        if updateService and client_data and newEscrow and newTransaction:
+        
+        if updateService and newEscrow :
             # Send mail using SMTP
             mail_subject = client_data.firstname+'! Vista Job/Service Update'
             email = {

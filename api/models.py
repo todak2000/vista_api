@@ -64,12 +64,13 @@ class Escrow(models.Model):
     budget= models.FloatField(max_length=500,verbose_name="Client Budget", null=True)
     service_type= models.TextField(max_length=500,verbose_name="Type of Services/Job", null=True)
     commission = models.CharField(default=0,max_length=500, verbose_name="Vista's Commission",null=True)
+    payment_mode= models.CharField(max_length=500,verbose_name="Payment Mode", null=True)
     dispute = models.BooleanField(default=False, verbose_name="Did Client raise dispute")
     isPaid = models.BooleanField(default=False, verbose_name="Was payment made to Service Provider")
     date_added = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"{self.client_id} - {self.artisan_id} - {self.fees_agreed} - {self.project_id} {self.dispute} - {self.isPaid}"
+        return f"{self.client_id} - {self.artisan_id} - {self.fees_agreed} - {self.project_id} {self.dispute} - {self.isPaid} - {self.payment_mode}"
 
 class Services(models.Model):
     class Meta:
