@@ -1138,8 +1138,8 @@ def accept_job(request):
         updateService = Services.objects.get(id=int(job_id))
         updateService.isTaken = True
         updateService.save()
+        client_data = User.objects.get(user_id=updateService.client_id)
         if updateService.payment_mode == "wallet":
-            client_data = User.objects.get(user_id=updateService.client_id)
             commission = float(updateService.amount) * 0.1
             newClientBalance = client_data.walletBalance - float(updateService.amount)
             client_data.walletBalance = newClientBalance
