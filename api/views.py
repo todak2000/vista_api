@@ -439,6 +439,7 @@ def signin(request):
                             "message": "Successfull",
                             "token": token.decode('UTF-8'),
                             "token-expiration": f"{timeLimit}",
+                            "sessionToken":request.session['token'],
                             "user_id": user_data.user_id,
                             "role": f"{user_data.role}",
                         }
