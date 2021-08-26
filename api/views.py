@@ -1155,11 +1155,12 @@ def accept_job(request):
     job_id = request.data.get("job_id",None)
     try: 
         updateService = Services.objects.get(id=int(job_id))
+        commission = float(updateService.amount) * 0.1
         if updateService.payment_mode == "wallet":
             updateService.isTaken = True
             updateService.save()
             client_data = User.objects.get(user_id=updateService.client_id)
-            commission = float(updateService.amount) * 0.1
+            
             newClientBalance = client_data.walletBalance - float(updateService.amount)
             client_data.walletBalance = newClientBalance
             client_data.save()
@@ -1167,13 +1168,14 @@ def accept_job(request):
             newTransaction.save()
             newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,sp_id=sp_id,budget=updateService.amount, service_type=updateService.service_type,commission=commission, payment_mode = updateService.payment_mode)
             newEscrow.save()
-        if updateService.payment_mode == "cash":
+        elif updateService.payment_mode == "cash":
             updateService.isTaken = True
             updateService.save()
             client_data = User.objects.get(user_id=updateService.client_id)
             newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,sp_id=sp_id,budget=updateService.amount, service_type=updateService.service_type,commission=commission, payment_mode = updateService.payment_mode)
             newEscrow.save()
-        
+        else:
+            updateService.save()
         if updateService and newEscrow and client_data :
             # Send mail using SMTP
             mail_subject = client_data.firstname+'! Vista Job/Service Update'
