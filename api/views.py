@@ -1149,7 +1149,7 @@ def accept_job(request):
         newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,sp_id=sp_id,budget=updateService.amount, service_type=updateService.service_type,commission=commission, payment_mode = updateService.payment_mode)
         newEscrow.save()
         
-        if updateService and newEscrow :
+        if updateService and newEscrow and client_data :
             # Send mail using SMTP
             mail_subject = client_data.firstname+'! Vista Job/Service Update'
             email = {
