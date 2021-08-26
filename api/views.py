@@ -1122,7 +1122,7 @@ def client_confirm(request):
                 "success": True,
                 "status" : 200,
             }
-        if updateService and sp_data  and newTransaction and updateService.payment_mode == "cash":
+        elif updateService and sp_data  and newTransaction and updateService.payment_mode == "cash":
             # Send mail using SMTP
             mail_subject = sp_data.firstname+'! Vista Job/Service Update'
             email = {
@@ -1436,13 +1436,13 @@ def service_list(request, service_type):
 
 @api_view(["POST"])
 def cash_collected(request, job_id):
-    updateService = Services.objects.get(id=int(job_id))
-    updateService.isCompleted = True
-    updateService.save()
+    # updateService = Services.objects.get(id=int(job_id))
+    # updateService.isCompleted = True
+    # updateService.save()
     updateEscrow = Escrow.objects.get(job_id=int(job_id))
     updateEscrow.isPaid = True
     updateEscrow.save()
-    if updateService and updateEscrow:
+    if updateEscrow:
         return_data = {
         "success": True,
         "status" : 200,
