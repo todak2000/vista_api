@@ -485,9 +485,7 @@ def signin(request):
 @api_view(["GET"])
 @autentication.token_required
 def dashboard(request,decrypedToken):
-    # token = request.session['token']
     try:
-        # if request.session['token']:
         user_id = decrypedToken['user_id']
         if user_id != None and user_id != '':
             #get user info
@@ -539,7 +537,6 @@ def dashboard(request,decrypedToken):
         return_data = {
             "success": False,
             "status" : 201,
-            "token": token,
             "message": str(e)
         }
     return Response(return_data)
