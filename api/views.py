@@ -1501,3 +1501,24 @@ def activate_user(request):
         "message": "Something went wrong"
         }
     return Response(return_data)
+
+@api_view(["POST"])
+def add_service_category(request):
+    service = request.data.get("service",None)
+    type = request.data.get("type",None)
+    amount = request.data.get("amount",None)
+    newService = ServiceCategory(service=service, type=type, amount=amount)
+    newService.save()
+    if newService:
+        return_data = {
+        "success": True,
+        "status" : 200,
+        "message":" a new " + service +" service category has been added successfully!"
+        }
+    else:
+        return_data = {
+        "success": False,
+        "status" : 202,
+        "message": "Something went wrong"
+        }
+    return Response(return_data)
