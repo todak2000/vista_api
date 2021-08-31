@@ -432,7 +432,7 @@ def signin(request):
                                "exp":timeLimit}
                     token = jwt.encode(payload,settings.SECRET_KEY)
                     request.session['token'] = token.decode('UTF-8')
-                    if is_valid_password and is_verified:
+                    if is_valid_password and is_verified and user_data.activate == True:
                         return_data = {
                             "success": True,
                             "status" : 200,
@@ -450,6 +450,15 @@ def signin(request):
                             "user_id": user_data.user_id,
                             "message": "User is not verified",
                             "status" : 205,
+                            "token": token.decode('UTF-8')
+                        }
+                        return Response(return_data)
+                    elif user_data.activate == False:
+                        return_data = {
+                            "success": False,
+                            "user_id": user_data.user_id,
+                            "message": "Your account has been deactivated. Kindly reach out to the admin",
+                            "status" : 209,
                             "token": token.decode('UTF-8')
                         }
                         return Response(return_data)
@@ -1357,7 +1366,7 @@ def artisans(request):
             "success": True,
             "status" : 200,
             "message": "Successfull",
-            "clients": artisansList,
+            "artisans": artisansList,
         }
     except Exception as e:
         return_data = {
@@ -1436,9 +1445,6 @@ def service_list(request, service_type):
 
 @api_view(["POST"])
 def cash_collected(request, job_id):
-    # updateService = Services.objects.get(id=int(job_id))
-    # updateService.isCompleted = True
-    # updateService.save()
     updateEscrow = Escrow.objects.get(job_id=int(job_id))
     updateEscrow.isPaid = True
     updateEscrow.save()
@@ -1447,6 +1453,46 @@ def cash_collected(request, job_id):
         "success": True,
         "status" : 200,
         "message": "Cash payment confirmed"
+        }
+    else:
+        return_data = {
+        "success": False,
+        "status" : 202,
+        "message": "Something went wrong"
+        }
+    return Response(return_data)
+
+@api_view(["POST"])
+def deactivate_user(request):
+    user_id = request.data.get("user_id",None)
+    user_data = User.objects.get(user_id=user_id)
+    user_data.activate = False  
+    user_data.save()
+    if user_data:
+        return_data = {
+        "success": True,
+        "status" : 200,
+        "message": user_data.firstname+" "+user_data.lastname+ " has been De-activated!"
+        }
+    else:
+        return_data = {
+        "success": False,
+        "status" : 202,
+        "message": "Something went wrong"
+        }
+    return Response(return_data)
+
+@api_view(["POST"])
+def activate_user(request):
+    user_id = request.data.get("user_id",None)
+    user_data = User.objects.get(user_id=user_id)
+    user_data.activate = True  
+    user_data.save()
+    if user_data:
+        return_data = {
+        "success": True,
+        "status" : 200,
+        "message": user_data.firstname+" "+user_data.lastname+ " has been Activated successfully!"
         }
     else:
         return_data = {
