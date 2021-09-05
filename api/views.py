@@ -1302,6 +1302,24 @@ def clients(request):
                 phone = clients_data[i].phone
                 walletBalance = clients_data[i].walletBalance
                 address = clients_data[i].address +" "+ clients_data[i].state
+                activate = clients_data[i].activate
+
+                userTransactions=Transaction.objects.filter(Q(from_id__icontains=clients_data[i].user_id) | Q(to_id__icontains=clients_data[i].user_id)).order_by('-date_added')[:20]
+                num1 = len(userTransactions)
+                userTransactionsList = []
+
+                for i in range(0,num1):
+                    date_added = userTransactions[i].date_added
+                    transaction_type  = userTransactions[i].transaction_type
+                    amount  = userTransactions[i].amount 
+                    transaction_message = userTransactions[i].transaction_message
+                    to_json2 = {
+                        "transaction_type": transaction_type,
+                        "transaction_message": transaction_message,
+                        "amount": amount,
+                        "date_added": date_added.strftime('%Y-%m-%d')
+                    }
+                    userTransactionsList.append(to_json2)
 
                 to_json = {
                     "user_id": user_id,
@@ -1309,7 +1327,9 @@ def clients(request):
                     "email": email,
                     "phone": phone,
                     "wallet_balance": walletBalance,
-                    "address": address
+                    "address": address,
+                    "status": activate,
+                    "transactions":userTransactionsList
                 }
                 clientsList.append(to_json)
         else:
@@ -1346,7 +1366,24 @@ def artisans(request):
                 account_name = artisans_data[i].account_name
                 account_number = artisans_data[i].account_number 
                 bank_name = artisans_data[i].bank_name
+                activate = artisans_data[i].activate
 
+                userTransactions=Transaction.objects.filter(Q(from_id__icontains=artisans_data[i].user_id) | Q(to_id__icontains=artisans_data[i].user_id)).order_by('-date_added')[:20]
+                num1 = len(userTransactions)
+                userTransactionsList = []
+
+                for i in range(0,num1):
+                    date_added = userTransactions[i].date_added
+                    transaction_type  = userTransactions[i].transaction_type
+                    amount  = userTransactions[i].amount 
+                    transaction_message = userTransactions[i].transaction_message
+                    to_json2 = {
+                        "transaction_type": transaction_type,
+                        "transaction_message": transaction_message,
+                        "amount": amount,
+                        "date_added": date_added.strftime('%Y-%m-%d')
+                    }
+                    userTransactionsList.append(to_json2)
                 to_json = {
                     "user_id": user_id,
                     "name": name,
@@ -1357,7 +1394,9 @@ def artisans(request):
                     "ratings":ratings,
                     "account_name": account_name,
                     "account_number": account_number,
-                    "bank_name":bank_name
+                    "bank_name":bank_name,
+                    "status": activate,
+                    "transactions":userTransactionsList
                 }
                 artisansList.append(to_json)
         else:
