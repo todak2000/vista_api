@@ -1328,7 +1328,7 @@ def clients(request):
                     "phone": phone,
                     "wallet_balance": walletBalance,
                     "address": address,
-                    "status": activate,
+                    "active": activate,
                     "transactions":userTransactionsList
                 }
                 clientsList.append(to_json)
@@ -1362,7 +1362,7 @@ def artisans(request):
                 phone = artisans_data[i].phone
                 walletBalance = artisans_data[i].walletBalance
                 address = artisans_data[i].address +" "+ artisans_data[i].state
-                ratings = artisans_data[i].ratings
+                ratings = float("{:.2f}".format(artisans_data[i].ratings))
                 account_name = artisans_data[i].account_name
                 account_number = artisans_data[i].account_number 
                 bank_name = artisans_data[i].bank_name
@@ -1395,7 +1395,7 @@ def artisans(request):
                     "account_name": account_name,
                     "account_number": account_number,
                     "bank_name":bank_name,
-                    "status": activate,
+                    "active": activate,
                     "transactions":userTransactionsList
                 }
                 artisansList.append(to_json)
