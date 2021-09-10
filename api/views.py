@@ -873,7 +873,7 @@ def service_request(request):
                 "sp_phone": sp_phone,
                 "sp_state":sp_state,
                 "sp_ratings":sp_ratings,
-                "distance": distance.distance(client_data.longitude,client_data.latitude, longitude,latitude),
+                "distance": distance.distance(float(client_data.longitude),float(client_data.latitude), float(longitude),float(latitude)),
                 "longitude": longitude,
                 "latitude": latitude,
                 "date_added": date_added,
