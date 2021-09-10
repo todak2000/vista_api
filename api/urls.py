@@ -41,4 +41,5 @@ urlpatterns = [
     path('api/v1/deactivate_user',views.deactivate_user), 
     path('api/v1/activate_user',views.activate_user),
     path('api/v1/add_new_service',views.add_service_category), 
+    path('api/v1/location',views.location), 
 ]

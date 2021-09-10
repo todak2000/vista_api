@@ -6,7 +6,7 @@ import jwt
 from django.db.models import Q, Sum
 from api.models import (User, otp, Transaction, Escrow, Services, ServiceCategory)
 from CustomCode import (autentication, password_functions,
-                        string_generator, validator)
+                        string_generator, validator, distance)
 # from django.db.models import Sum
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -863,6 +863,8 @@ def service_request(request):
             sp_phone  = serviceProviders[i].phone 
             sp_state = serviceProviders[i].state
             sp_ratings = serviceProviders[i].ratings
+            longitude = serviceProviders[i].longitude
+            latitude = serviceProviders[i].latitude
             to_json = {
                 "sp_id": sp_id,
                 "sp_firstname": sp_firstname,
@@ -871,6 +873,9 @@ def service_request(request):
                 "sp_phone": sp_phone,
                 "sp_state":sp_state,
                 "sp_ratings":sp_ratings,
+                "distance": distance.distance(client_data.longitude,client_data.latitude, longitude,latitude),
+                "longitude": longitude,
+                "latitude": latitude,
                 "date_added": date_added,
             }
             serviceProvidersList.append(to_json)
@@ -1561,3 +1566,30 @@ def add_service_category(request):
         "message": "Something went wrong"
         }
     return Response(return_data)
+
+@api_view(["POST"])
+def location(request):
+    email = request.data.get("email",None)
+    longitude = request.data.get("longitude",None)
+    latitude = request.data.get("latitude",None)
+
+    user_data = User.objects.get(email=email)
+    if user_data:
+        # updateLocation = User.objects.get(user__email = email)
+        user_data.longitude = longitude
+        user_data.latitude = latitude
+        user_data.save()
+        return_data = {
+        "success": True,
+        "status" : 200,
+        "message": "User Location saved! "
+        }
+    else:
+        return_data = {
+        "success": False,
+        "status" : 202,
+        "message": "Something went wrong"
+        }
+    return Response(return_data)
+    
+    
