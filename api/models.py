@@ -33,6 +33,7 @@ class User(models.Model):
     # location data
     latitude = models.CharField(max_length=500,verbose_name="Latitude", default="6.6363701")
     longitude = models.CharField(max_length=500,verbose_name="Longitude", default="3.3405270")
+    owingVistaCommission = models.BooleanField(default=False, verbose_name="Has SP paid the comissioned owed")
     def __str__(self):
         return f"{self.user_id} - {self.user_online} - {self.service} - {self.engaged} {self.email} - {self.address}- {self.state}"
 
