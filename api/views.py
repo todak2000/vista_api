@@ -1140,12 +1140,13 @@ def client_confirm(request):
             sp_data2 = User.objects.get(user_id=sp_id)
             sp_data2.owingVistaCommission = True
             sp_data2.save()
+            com = updateService.amount* 0.9
             # Send mail using SMTP
             mail_subject = sp_data.firstname+'! Vista Job/Service Update'
             email = {
                 'subject': mail_subject,
-                'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have confirmed the Job Completion and you have collected the cash of sum of NGN'+str(updateService.amount)+'. Admin will reach out figure out collection of our commision of '+str(updateService.commission)+' from you. Your cooperation is highly appreciated as until you do the needful, you wont be able to get another request. Thanks.</p>',
-                'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+str(updateService.amount)+'. Admin will reach out figure out collection of our commision of '+str(updateService.commission)+' from you. Your cooperation is highly appreciated as until you do the needful, you wont be able to get another request. Thanks',
+                'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have confirmed the Job Completion and you have collected the cash of sum of NGN'+str(updateService.amount)+'. Admin will reach out figure out collection of our commision of '+str(com)+' from you. Your cooperation is highly appreciated as until you do the needful, you wont be able to get another request. Thanks.</p>',
+                'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+str(updateService.amount)+'. Admin will reach out figure out collection of our commision of '+str(com)+' from you. Your cooperation is highly appreciated as until you do the needful, you wont be able to get another request. Thanks',
                 'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': sp_data.firstname, 'email': sp_data.email}
