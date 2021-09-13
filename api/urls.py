@@ -42,4 +42,8 @@ urlpatterns = [
     path('api/v1/activate_user',views.activate_user),
     path('api/v1/add_new_service',views.add_service_category), 
     path('api/v1/location',views.location), 
+
+    path('api/v1/transactions',views.all_transactions), 
+    path('api/v1/transactions/<user_id>',views.user_transactions),
+    path('api/v1/edit_service/<sub_service>',views.edit_service),
 ]

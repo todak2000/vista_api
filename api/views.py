@@ -1596,4 +1596,110 @@ def location(request):
         }
     return Response(return_data)
     
-    
+@api_view(["GET"])
+def all_transactions(request):
+    try: 
+        allTransactions=Transaction.objects.all().order_by('-date_added')
+        num = len(allTransactions)
+        transactionList = []
+        if num > 0:
+            for i in range(0,num):
+                date_added = allTransactions[i].date_added
+                transaction_type  = allTransactions[i].transaction_type
+                amount  = allTransactions[i].amount 
+                # sender = allTransactions[i].from_id
+                # receiver = allTransactions[i].to_id
+                transaction_message = allTransactions[i].transaction_message
+                to_json = {
+                    "transaction_type": transaction_type,
+                    "transaction_message": transaction_message,
+                    "amount": amount,
+                    # "sender": sender,
+                    # "receiver": receiver,
+                    "date_added": date_added.strftime('%Y-%m-%d')
+                }
+                transactionList.append(to_json)
+        else:
+            transactionList = ["There are no transactions in the database for now!."]
+        return_data = {
+            "success": True,
+            "status" : 200,
+            "message": "Successfull",
+            "artisans": transactionList,
+        }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
+
+@api_view(["GET"])
+def user_transactions(request, user_id):
+    try: 
+        allTransactions=Transaction.objects.filter(Q(from_id__icontains=user_id) | Q(to_id__icontains=user_id)).order_by('-date_added')
+        user_data = User.objects.get(user_id=user_id)
+        num = len(allTransactions)
+        transactionList = []
+        if num > 0:
+            for i in range(0,num):
+                date_added = allTransactions[i].date_added
+                transaction_type  = allTransactions[i].transaction_type
+                amount  = allTransactions[i].amount 
+                # sender = allTransactions[i].from_id
+                # receiver = allTransactions[i].to_id
+                transaction_message = allTransactions[i].transaction_message
+                to_json = {
+                    "transaction_type": transaction_type,
+                    "transaction_message": transaction_message,
+                    "amount": amount,
+                    "user": user_data.firstname +" "+ user_data.lastname,
+                    # "sender": sender,
+                    # "receiver": receiver,
+                    "date_added": date_added.strftime('%Y-%m-%d')
+                }
+                transactionList.append(to_json)
+        else:
+            transactionList = ["There are no transactions for+"+user_data.firstname +" "+ user_data.lastname +"in the database for now!."]
+        return_data = {
+            "success": True,
+            "status" : 200,
+            "message": "Successfull",
+            "artisans": transactionList,
+        }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
+
+@api_view(["GET"])
+def edit_service(request, sub_service):
+    new_price = request.data.get("new_price",None)
+    try:
+        service = ServiceCategory.objects.get(type=sub_service)
+        service.amount = new_price
+        service.save()
+        
+        if service:
+            return_data = {
+            "success": True,
+            "status" : 200,
+            "message": sub_service+ "price successfully updated",
+            }
+        else:
+            return_data = {
+            "success": False,
+            "status" : 205,
+            "message": "Something went wrong!",
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)   
