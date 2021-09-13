@@ -1607,18 +1607,18 @@ def all_transactions(request):
                 date_added = allTransactions[i].date_added
                 transaction_type  = allTransactions[i].transaction_type
                 amount  = allTransactions[i].amount 
-                if allTransactions[i].transaction_type == "Credit":
-                    receiver = User.objects.get(user_id=allTransactions[i].to_id).firstname +" "+ User.objects.get(user_id=allTransactions[i].to_id).lastname 
-                    sender = allTransactions[i].from_id
-                    user_id = User.objects.get(user_id=allTransactions[i].to_id).user_id
-                if allTransactions[i].transaction_type == "Debit":
-                    sender = User.objects.get(user_id=allTransactions[i].from_id).firstname +" "+ User.objects.get(user_id=allTransactions[i].to_id).lastname 
-                    receiver = allTransactions[i].to_id
-                    user_id = User.objects.get(user_id=allTransactions[i].from_id).user_id
+                # if allTransactions[i].transaction_type == "Credit":
+                #     receiver = User.objects.get(user_id=allTransactions[i].to_id).firstname +" "+ User.objects.get(user_id=allTransactions[i].to_id).lastname 
+                #     sender = allTransactions[i].from_id
+                #     user_id = User.objects.get(user_id=allTransactions[i].to_id).user_id
+                # if allTransactions[i].transaction_type == "Debit":
+                #     sender = User.objects.get(user_id=allTransactions[i].from_id).firstname +" "+ User.objects.get(user_id=allTransactions[i].to_id).lastname 
+                #     receiver = allTransactions[i].to_id
+                #     user_id = User.objects.get(user_id=allTransactions[i].from_id).user_id
                 # user_sender = User.objects.get(user_id=allTransactions[i].from_id)
                 
-                # sender = allTransactions[i].from_id
-                # receiver = allTransactions[i].to_id
+                sender = allTransactions[i].from_id
+                receiver = allTransactions[i].to_id
                 transaction_message = allTransactions[i].transaction_message
                 to_json = {
                     "transaction_type": transaction_type,
@@ -1626,7 +1626,7 @@ def all_transactions(request):
                     "amount": amount,
                     "sender": sender,
                     "receiver": receiver,
-                    "user_id": user_id,
+                    # "user_id": user_id,
                     "date_added": date_added.strftime('%Y-%m-%d')
                 }
                 transactionList.append(to_json)
