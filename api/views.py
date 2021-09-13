@@ -1607,6 +1607,16 @@ def all_transactions(request):
                 date_added = allTransactions[i].date_added
                 transaction_type  = allTransactions[i].transaction_type
                 amount  = allTransactions[i].amount 
+                if allTransactions[i].transaction_type == "Credit":
+                    receiver = User.objects.get(user_id=allTransactions[i].to_id).firstname +" "+ User.objects.get(user_id=allTransactions[i].to_id).lastname 
+                    sender = allTransactions[i].from_id
+                    user_id = User.objects.get(user_id=allTransactions[i].to_id).user_id
+                if allTransactions[i].transaction_type == "Debit":
+                    sender = User.objects.get(user_id=allTransactions[i].from_id).firstname +" "+ User.objects.get(user_id=allTransactions[i].to_id).lastname 
+                    receiver = allTransactions[i].to_id
+                    user_id = User.objects.get(user_id=allTransactions[i].from_id).user_id
+                # user_sender = User.objects.get(user_id=allTransactions[i].from_id)
+                
                 # sender = allTransactions[i].from_id
                 # receiver = allTransactions[i].to_id
                 transaction_message = allTransactions[i].transaction_message
@@ -1614,8 +1624,9 @@ def all_transactions(request):
                     "transaction_type": transaction_type,
                     "transaction_message": transaction_message,
                     "amount": amount,
-                    # "sender": sender,
-                    # "receiver": receiver,
+                    "sender": sender,
+                    "receiver": receiver,
+                    "user_id": user_id,
                     "date_added": date_added.strftime('%Y-%m-%d')
                 }
                 transactionList.append(to_json)
@@ -1625,7 +1636,7 @@ def all_transactions(request):
             "success": True,
             "status" : 200,
             "message": "Successfull",
-            "artisans": transactionList,
+            "all_transactions": transactionList,
         }
     except Exception as e:
         return_data = {
@@ -1666,7 +1677,7 @@ def user_transactions(request, user_id):
             "success": True,
             "status" : 200,
             "message": "Successfull",
-            "artisans": transactionList,
+            "user_transactions": transactionList,
         }
     except Exception as e:
         return_data = {
@@ -1676,7 +1687,7 @@ def user_transactions(request, user_id):
         }
     return Response(return_data)
 
-@api_view(["GET"])
+@api_view(["POST"])
 def edit_service(request, sub_service):
     new_price = request.data.get("new_price",None)
     try:
@@ -1688,7 +1699,7 @@ def edit_service(request, sub_service):
             return_data = {
             "success": True,
             "status" : 200,
-            "message": sub_service+ "price successfully updated",
+            "message": sub_service+ " pricing successfully updated",
             }
         else:
             return_data = {
