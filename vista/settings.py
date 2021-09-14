@@ -19,7 +19,7 @@ from corsheaders.defaults import default_headers
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-cloudinary.config(cloud_name=config("api_key"),
+cloudinary.config(cloud_name=config("cloud_name"),
         api_key=config("api_key"),
         api_secret=config("api_secret"))
 # Quick-start development settings - unsuitable for production
