@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'api',
     'corsheaders',
-    'cloudinary'
+    'cloudinary',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [

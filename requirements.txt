@@ -12,3 +12,4 @@ cloudinary==1.22.0
 python-decouple==3.3 
 pysendpulse==0.1.2
 psycopg2==2.8.4 
+drf-yasg==1.17.1
