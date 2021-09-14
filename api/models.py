@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
-from django.utils.translation import activate
+from cloudinary.models import CloudinaryField
+
 # Create your models here.
 class User(models.Model):
     class Meta:
@@ -114,3 +115,18 @@ class ServiceCategory(models.Model):
 
     def __str__(self):
         return f"{self.service} - {self.type} - {self.amount} "
+
+class VerificationDocuments(models.Model):
+    class Meta:
+        db_table = 'SPs Verification Documents'
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    bvn = models.CharField(max_length=30, verbose_name="BVN", null=True)
+    nin = models.CharField(max_length=30, verbose_name="NIN", null=True)
+    idCard = models.CharField(max_length=500, verbose_name="ID Card", null=True)
+    passport = models.CharField(max_length=500, verbose_name="Photo Passport", null=True)
+    proofOfAddress = models.CharField(max_length=30, verbose_name="Proof of Address", null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+ 
+    def __str__(self):
+        return f"{self.user} - {self.bvn} - {self.nin} - {self.idCard} - {self.passport} - {self.proofOfAddress}"

@@ -4,7 +4,7 @@ import json
 import requests
 import jwt
 from django.db.models import Q, Sum
-from api.models import (User, otp, Transaction, Escrow, Services, ServiceCategory)
+from api.models import (User, VerificationDocuments, otp, Transaction, Escrow, Services, ServiceCategory)
 from CustomCode import (autentication, password_functions,
                         string_generator, validator, distance)
 # from django.db.models import Sum
@@ -12,8 +12,13 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from vista import settings
 
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, JSONParser
+
 from pysendpulse.pysendpulse import PySendPulse
 from decouple import config
+
+import cloudinary.uploader
 
 REST_API_ID = config("REST_API_ID")
 REST_API_SECRET = config("REST_API_SECRET")
@@ -75,7 +80,9 @@ def signup(request):
                 #Save OTP
                 user_OTP =otp(user=new_userData,otp_code=code)
                 user_OTP.save()
-
+                # add user to verification document model
+                newUserDoc = VerificationDocuments(user=new_userData)
+                newUserDoc.save()
                 # Get User Validation
                 validated = otp.objects.get(user__user_id=userRandomId).validated
                 #Generate token
@@ -1714,3 +1721,137 @@ def edit_service(request, sub_service):
             "message": str(e)
         }
     return Response(return_data)   
+
+# Admin upload Verification details
+class PassportUploadView(APIView):
+    parser_classes = (
+        MultiPartParser,
+        JSONParser,
+    )
+
+    @staticmethod
+    def post(request, user_id):
+        try:
+            passport = request.data.get('passport')
+            user_data = User.objects.get(user_id=user_id)
+            passport1 = cloudinary.uploader.upload(passport)
+            userDoc = VerificationDocuments.objects.get(user=user_data)
+            userDoc.passport = passport1["secure_url"]
+            userDoc.save()
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": user_data.firstname+" "+user_data.lastname+"'s Passport Document successfully uploaded",
+                "PassportURL":passport1["secure_url"]
+            }
+        except Exception as e:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": str(e)
+            }
+        return Response(return_data) 
+
+class IdentityUploadView(APIView):
+    parser_classes = (
+        MultiPartParser,
+        JSONParser,
+    )
+
+    @staticmethod
+    def post(request, user_id):
+        try:
+            idCard = request.data.get('identity_card')
+            user_data = User.objects.get(user_id=user_id)
+            idCard1 = cloudinary.uploader.upload(idCard)
+            userDoc = VerificationDocuments.objects.get(user=user_data)
+            userDoc.idCard = idCard1["secure_url"]
+            userDoc.save()
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": user_data.firstname+" "+user_data.lastname+"'s Identity Card Document successfully uploaded",
+                "identityURL":idCard1["secure_url"]
+            }
+        except Exception as e:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": str(e)
+            }
+        return Response(return_data) 
+
+class AddressUploadView(APIView):
+    parser_classes = (
+        MultiPartParser,
+        JSONParser,
+    )
+
+    @staticmethod
+    def post(request, user_id):
+        try:
+            address = request.data.get('address')
+            user_data = User.objects.get(user_id=user_id)
+            address1 = cloudinary.uploader.upload(address)
+            userDoc = VerificationDocuments.objects.get(user=user_data)
+            userDoc.proofOfAddress = address1["secure_url"]
+            userDoc.save()
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": user_data.firstname+" "+user_data.lastname+"'s Proof of Address Document successfully uploaded",
+                "addressURL":address1["secure_url"]
+            }
+        except Exception as e:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": str(e)
+            }
+        return Response(return_data) 
+
+@api_view(["POST"])
+def nin_upload(request, user_id):
+    nin = request.data.get("nin")
+    try:
+        user_data = User.objects.get(user_id=user_id)
+        userDoc = VerificationDocuments.objects.get(user=user_data)
+        userDoc.nin = nin
+        userDoc.save()
+        
+        return_data = {
+                "success": True,
+                "status" : 200,
+                "message": user_data.firstname+" "+user_data.lastname+"'s National Identity Number (NIN) successfully added",
+                "NIN":nin
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data) 
+
+@api_view(["POST"])
+def bvn_upload(request, user_id):
+    bvn = request.data.get("bvn")
+    try:
+        user_data = User.objects.get(user_id=user_id)
+        userDoc = VerificationDocuments.objects.get(user=user_data)
+        userDoc.bvn = bvn
+        userDoc.save()
+        
+        return_data = {
+                "success": True,
+                "status" : 200,
+                "message": user_data.firstname+" "+user_data.lastname+"'s Bank Verification Number (NIN) successfully added",
+                "BVN":bvn
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data) 

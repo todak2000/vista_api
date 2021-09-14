@@ -1,6 +1,7 @@
 from django.urls import path
-
 from . import views
+
+from api.views import AddressUploadView, IdentityUploadView, PassportUploadView
 
 urlpatterns = [
     path('',views.index),                                              #tested
@@ -46,4 +47,11 @@ urlpatterns = [
     path('api/v1/transactions',views.all_transactions), 
     path('api/v1/transactions/<user_id>',views.user_transactions),
     path('api/v1/edit_service/<sub_service>',views.edit_service),
+
+    #v3
+    path('api/v1/passport/<user_id>', PassportUploadView.as_view()),
+    path('api/v1/identity/<user_id>', IdentityUploadView.as_view()),
+    path('api/v1/address/<user_id>', AddressUploadView.as_view()),
+    path('api/v1/bvn/<user_id>',views.bvn_upload),
+    path('api/v1/nin/<user_id>',views.nin_upload),
 ]
