@@ -34,7 +34,7 @@ class User(models.Model):
     # location data
     latitude = models.CharField(max_length=500,verbose_name="Latitude", default="6.6363701")
     longitude = models.CharField(max_length=500,verbose_name="Longitude", default="3.3405270")
-    owingVistaCommission = models.BooleanField(default=False, verbose_name="Has SP paid the comissioned owed")
+    owingVistaCommission = models.BooleanField(default=False, verbose_name="Is SP owing Vista Comission")
     def __str__(self):
         return f"{self.user_id} - {self.user_online} - {self.service} - {self.engaged} {self.email} - {self.address}- {self.state}"
 
@@ -85,7 +85,7 @@ class Services(models.Model):
     # Services
     client_id = models.TextField(max_length=20,verbose_name="Client ID",null=True)
     sp_id = models.TextField(max_length=20,verbose_name="Service Provider ID",null=True)
-    amount= models.FloatField(max_length=500,verbose_name="Service Charge", null=True)
+    amount= models.FloatField(max_length=500,verbose_name="Service Charge Amount", null=True)
     service_type= models.TextField(max_length=500,verbose_name="Type of Services/Job", null=True)
     sp_reject_id= models.TextField(max_length=500,verbose_name="Service Provider ID who rejected job", null=True)
     
