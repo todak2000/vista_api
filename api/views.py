@@ -849,13 +849,13 @@ def fund(request):
 def service_request(request):
     user_phone = request.data.get("phone",None)
     service_type = request.data.get("service_type",None)
-    service_form= request.data.get("service_form",None)
-    address = request.data.get("address",None)
-    unit= request.data.get("unit",None)
-    specific_service = request.data.get("specific_service",None)
-    amount = request.data.get("amount",None)
-    payment_mode = request.data.get("payment_mode",None)
-    description = request.data.get("description",None)
+    # service_form= request.data.get("service_form",None)
+    # address = request.data.get("address",None)
+    # unit= request.data.get("unit",None)
+    # specific_service = request.data.get("specific_service",None)
+    # amount = request.data.get("amount",None)
+    # payment_mode = request.data.get("payment_mode",None)
+    # description = request.data.get("description",None)
     try: 
         client_data = User.objects.get(phone=user_phone)
         serviceProviders=User.objects.filter(role='0',state=client_data.state, service=service_type, engaged=False, user_online=True, owingVistaCommission=False).order_by('-date_added')[:5]
@@ -887,12 +887,12 @@ def service_request(request):
             }
             serviceProvidersList.append(to_json)
         if num > 0:
-            newService = Services(client_id=client_data.user_id, amount=amount, service_type=service_type, service_form=service_form, address=address, payment_mode=payment_mode,description=description, specific_service=specific_service, unit=unit)
-            newService.save()
+            # newService = Services(client_id=client_data.user_id, amount=amount, service_type=service_type, service_form=service_form, address=address, payment_mode=payment_mode,description=description, specific_service=specific_service, unit=unit)
+            # newService.save()
             return_data = {
                 "success": True,
                 "status" : 200,
-                "job_id": newService.id, 
+                # "job_id": newService.id, 
                 "serviceProviders": serviceProvidersList
             }
         if num <= 0:
@@ -912,16 +912,27 @@ def service_request(request):
 @api_view(["POST"])
 def accept_sp(request):
     sp_id = request.data.get("sp_id",None)
-    job_id = request.data.get("job_id",None)
+    service_form= request.data.get("service_form",None)
+    address = request.data.get("address",None)
+    unit= request.data.get("unit",None)
+    specific_service = request.data.get("specific_service",None)
+    amount = request.data.get("amount",None)
+    payment_mode = request.data.get("payment_mode",None)
+    description = request.data.get("description",None)
+    user_phone = request.data.get("phone",None)
+    service_type = request.data.get("service_type",None)
+    # job_id = request.data.get("job_id",None)
     try: 
-        updateService = Services.objects.get(id=int(job_id))
-        updateService.sp_id = sp_id
-        updateService.save()
-
+        client_data = User.objects.get(phone=user_phone)
+        # updateService = Services.objects.get(id=int(job_id))
+        # updateService.sp_id = sp_id
+        # updateService.save()
+        newService = Services(sp_id=sp_id, client_id=client_data.user_id, amount=amount, service_type=service_type, service_form=service_form, address=address, payment_mode=payment_mode,description=description, specific_service=specific_service, unit=unit)
+        newService.save()
         sp_data = User.objects.get(user_id=sp_id)
         sp_data.engaged =True
         sp_data.save()
-        if updateService and sp_data :
+        if newService and sp_data :
             # Send mail using SMTP
             mail_subject = sp_data.firstname+'! Vista Job/Service Update'
             email = {
