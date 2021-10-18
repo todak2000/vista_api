@@ -1902,7 +1902,7 @@ def get_gallery(request, user_id):
     try:
         user_data = User.objects.get(user_id=user_id)
         userGallery = Gallery.objects.filter(user=user_data)
-        num = len(userTransactions)
+        num = len(userGallery)
         userGalleryList = []
         for i in range(0,num):
             imageUrl = userGallery[i].imageUrl
