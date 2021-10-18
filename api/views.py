@@ -4,7 +4,7 @@ import json
 import requests
 import jwt
 from django.db.models import Q, Sum
-from api.models import (User, VerificationDocuments, otp, Transaction, Escrow, Services, ServiceCategory)
+from api.models import (Gallery, User, VerificationDocuments, otp, Transaction, Escrow, Services, ServiceCategory)
 from CustomCode import (autentication, password_functions,
                         string_generator, validator, distance)
 # from django.db.models import Sum
@@ -955,7 +955,7 @@ def accept_sp(request):
             "status" : 201,
             "message": str(e)
         }
-    return Response(return_data)
+    return Response(return_data) 
 
 @api_view(["GET"])
 @autentication.token_required
@@ -1858,6 +1858,62 @@ def bvn_upload(request, user_id):
                 "status" : 200,
                 "message": user_data.firstname+" "+user_data.lastname+"'s Bank Verification Number (NIN) successfully added",
                 "BVN":bvn
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data) 
+
+class GalleyUploadView(APIView):
+    parser_classes = (
+        MultiPartParser,
+        JSONParser,
+    )
+
+    @staticmethod
+    def post(request, user_id):
+        try:
+            gallery = request.data.get('gallery')
+            user_data = User.objects.get(user_id=user_id)
+            gallery1 = cloudinary.uploader.upload(gallery)
+            newData = Gallery(user=user_data,imageUrl=gallery1["secure_url"])
+            # userDoc.proofOfAddress = gallery1["secure_url"]
+            newData.save()
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": user_data.firstname+" "+user_data.lastname+"'s Gallery image successfully uploaded",
+                "galleryURL":gallery1["secure_url"]
+            }
+        except Exception as e:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": str(e)
+            }
+        return Response(return_data) 
+
+@api_view(["GET"])
+def get_gallery(request, user_id):
+    # user_id = request.data.get("user_id")
+    try:
+        user_data = User.objects.get(user_id=user_id)
+        userGallery = Gallery.objects.filter(user=user_data)
+        num = len(userTransactions)
+        userGalleryList = []
+        for i in range(0,num):
+            imageUrl = userGallery[i].imageUrl
+            to_json = {
+                "imageUrl": imageUrl ,
+            }
+            userGalleryList.append(to_json)
+        return_data = {
+                "success": True,
+                "status" : 200,
+                "gallery":userGalleryList
             }
     except Exception as e:
         return_data = {

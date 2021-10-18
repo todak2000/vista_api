@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.fields import DateField
 from django.utils import timezone
 from cloudinary.models import CloudinaryField
 
@@ -130,3 +131,10 @@ class VerificationDocuments(models.Model):
  
     def __str__(self):
         return f"{self.user} - {self.bvn} - {self.nin} - {self.idCard} - {self.passport} - {self.proofOfAddress}"
+
+class Gallery(models.Model):
+    class Meta:
+        db_table = "SP Galley"
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    imageUrl = models.CharField(max_length=500,verbose_name="Image URL")
+    date_added = models.DateTimeField(default=timezone.now)
