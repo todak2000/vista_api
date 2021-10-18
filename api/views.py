@@ -1913,7 +1913,8 @@ def get_gallery(request, user_id):
         return_data = {
                 "success": True,
                 "status" : 200,
-                "gallery":userGalleryList
+                "gallery":userGalleryList,
+                "gallery2": userGallery,
             }
     except Exception as e:
         return_data = {
