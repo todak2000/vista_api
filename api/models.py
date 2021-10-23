@@ -138,3 +138,17 @@ class Gallery(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     imageUrl = models.CharField(max_length=500,verbose_name="Image URL")
     date_added = models.DateTimeField(default=timezone.now)
+
+class AdminUser(models.Model):
+    class Meta:
+        db_table = "Vista_Admin_table"
+    user_id = models.CharField(max_length=500,unique=True)
+    firstname = models.CharField(max_length=30,verbose_name="Firstname",blank=True)
+    lastname = models.CharField(max_length=30,verbose_name="Lastname",blank=True)
+    email = models.EmailField(max_length=90, unique=True,verbose_name="Email")
+    password = models.TextField(max_length=200,verbose_name="Password")
+    role = models.TextField(max_length=50,verbose_name="User role",default="client")
+    
+    date_added = models.DateTimeField(default=timezone.now)
+    def __str__(self):
+        return f"{self.user_id} -{self.email} - {self.role}- {self.firstname}"

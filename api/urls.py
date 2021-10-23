@@ -56,4 +56,7 @@ urlpatterns = [
     path('api/v1/bvn/<user_id>',views.bvn_upload),
     path('api/v1/nin/<user_id>',views.nin_upload),
     path('api/v1/get_gallery/<user_id>',views.get_gallery), 
+    path('api/v1/admin_signup',views.admin_signup), 
+    path('api/v1/admin_signin',views.admin_signin), 
+    path('api/v1/admin_change_password',views.admin_change_password), 
 ]

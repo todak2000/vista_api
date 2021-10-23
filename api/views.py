@@ -4,7 +4,7 @@ import json
 import requests
 import jwt
 from django.db.models import Q, Sum
-from api.models import (Gallery, User, VerificationDocuments, otp, Transaction, Escrow, Services, ServiceCategory)
+from api.models import (AdminUser, Gallery, User, VerificationDocuments, otp, Transaction, Escrow, Services, ServiceCategory)
 from CustomCode import (autentication, password_functions,
                         string_generator, validator, distance)
 # from django.db.models import Sum
@@ -361,7 +361,7 @@ def change_password(request):
                 return Response(return_data)
             else:
                 encryptpassword = password_functions.generate_password_hash(new_password)
-                user_data.user_password = encryptpassword
+                user_data.password = encryptpassword
                 user_data.save()
                 return_data = {
                     "success": True,
@@ -1923,3 +1923,180 @@ def get_gallery(request, user_id):
             "message": str(e)
         }
     return Response(return_data) 
+
+# ADMIN AUTH APIS
+# SIGN UP API
+@api_view(["POST"])
+def admin_signup(request):
+    try:
+        firstName = request.data.get('firstName',None)
+        lastName = request.data.get('lastName',None)
+        email = request.data.get('email',None)
+        password = request.data.get('password',None)
+        role= request.data.get('role',None)
+        reg_field = [firstName,lastName,email,password, role]
+        if not None in reg_field and not "" in reg_field:
+            if AdminUser.objects.filter(email =email).exists():
+                return_data = {
+                    "success": False,
+                    "status" : 201,
+                    "message": "User Exists"
+                }
+            elif validator.checkmail(email) == False:
+                return_data = {
+                    "success": False,
+                    "status" : 201,
+                    "message": "Email is Invalid"
+                }
+            else:
+                #generate user_id
+                if role == 0: #SuperAdmin
+                    userRandomId = "VS"+string_generator.numeric(4)
+                else: # 1 Admin
+                    userRandomId = "VA"+string_generator.numeric(4)
+                #encrypt password
+                encryped_password = password_functions.generate_password_hash(password)
+                #Save user_data
+                new_userData = AdminUser(user_id=userRandomId,firstname=firstName,lastname=lastName,email=email, password=encryped_password, role=role)
+                new_userData.save()
+                
+            
+                #Generate token
+                timeLimit= datetime.datetime.utcnow() + datetime.timedelta(minutes=1440) #set duration for token
+                payload = {"user_id": f"{userRandomId}","exp":timeLimit}
+                token = jwt.encode(payload,settings.SECRET_KEY)
+                
+                if new_userData:
+                    return_data = {
+                        "success": True,
+                        "status" : 200,
+                        "message": "Admin registration was successful.",
+                        "user_id": userRandomId,
+                        "email":email,
+                        "password":password,
+                        "token": f"{token}",
+                        "elapsed_time": f"{timeLimit}",
+                        }
+        else:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": "Invalid Parameter"
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 202,
+            "message": str(e)
+        }
+    return Response(return_data)
+
+# CHANGE PASSWORD API
+@api_view(["PUT"])
+def admin_change_password(request):
+    try:
+        email = request.data.get("email",None)
+        new_password = request.data.get("password",None)
+        confirm_new_password = request.data.get("confirm_password",None)
+        user_data = AdminUser.objects.get(email=email)  
+        
+        if user_data:
+            if new_password != confirm_new_password:
+                return_data = {
+                    "success": False,
+                    "status" : 202,
+                    "message": "Password do not match!"
+                }
+                return Response(return_data)
+            else:
+                encryptpassword = password_functions.generate_password_hash(new_password)
+                user_data.password = encryptpassword
+                user_data.save()
+                return_data = {
+                    "success": True,
+                    "status" : 200,
+                    "email": email,
+                    "newPassword": new_password,
+                    "message": "Password Changed Successfully! Kindly login"
+                }
+                return Response(return_data)
+        else:
+            return_data = {
+                "success": False,
+                "status" : 202,
+                "message": 'Sorry, You are not Authorized to access this link!'
+            }
+            return Response(return_data)
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 202,
+            "message": str(e)
+            # "message": 'Sorry, Something went wrong!'
+        }
+    return Response(return_data)
+
+#SIGNIN API
+@api_view(["POST"])
+def admin_signin(request):
+    try:
+        email = request.data.get("email",None)
+        password = request.data.get("password",None)
+        field = [email,password]
+        if not None in field and not '' in field:
+            validate_mail = validator.checkmail(email)
+            if validate_mail == True:
+                if AdminUser.objects.filter(email =email).exists() == False:
+                    return_data = {
+                        "success": False,
+                        "status" : 202,
+                        "message": "Admin User does not exist"
+                    }
+                else:
+                    user_data = AdminUser.objects.get(email=email)
+                    #Generate token
+                    timeLimit= datetime.datetime.utcnow() + datetime.timedelta(minutes=1440) #set limit for user
+                    payload = {"user_id": f'{user_data.user_id}', "exp":timeLimit}
+                    token = jwt.encode(payload,settings.SECRET_KEY)
+                    request.session['token'] = token
+                    if user_data:
+                        return_data = {
+                            "success": True,
+                            "status" : 200,
+                            "message": "Successfull",
+                            "token": f"{token}",
+                            "token-expiration": f"{timeLimit}",
+                            "sessionToken":request.session['token'],
+                            "user_id": user_data.user_id,
+                            "name": str(user_data.firstname) +" "+str(user_data.lastname),
+                            "role": f"{user_data.role}",
+                        }
+                        return Response(return_data)
+                    else:
+                        return_data = {
+                            "success": False,
+                            "status" : 201,
+                            "message" : "Wrong Password"
+                        }
+                        return Response(return_data)
+            else:
+                return_data = {
+                    "success": False,
+                    "status" : 201,
+                    "message": "Email is Invalid"
+                }
+                return Response(return_data)
+        else:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message" : "Invalid Parameters"
+            }
+            return Response(return_data)
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 202,
+            "message": str(e)
+        }
+    return Response(return_data)
