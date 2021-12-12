@@ -2057,16 +2057,16 @@ def admin_signin(request):
                     #Generate token
                     timeLimit= datetime.datetime.utcnow() + datetime.timedelta(minutes=1440) #set limit for user
                     payload = {"user_id": f'{user_data.user_id}', "exp":timeLimit}
-                    token = jwt.encode(payload,settings.SECRET_KEY)
-                    request.session['token'] = token
+                    # token = jwt.encode(payload,settings.SECRET_KEY)
+                    # request.session['token'] = token
                     if user_data:
                         return_data = {
                             "success": True,
                             "status" : 200,
                             "message": "Successfull",
-                            "token": f"{token}",
-                            "token-expiration": f"{timeLimit}",
-                            "sessionToken":request.session['token'],
+                            # "token": f"{token}",
+                            # "token-expiration": f"{timeLimit}",
+                            # "sessionToken":request.session['token'],
                             "user_id": user_data.user_id,
                             "name": str(user_data.firstname) +" "+str(user_data.lastname),
                             "role": f"{user_data.role}",
