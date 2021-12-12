@@ -1962,9 +1962,9 @@ def admin_signup(request):
                 
             
                 #Generate token
-                timeLimit= datetime.datetime.utcnow() + datetime.timedelta(minutes=1440) #set duration for token
-                payload = {"user_id": f"{userRandomId}","exp":timeLimit}
-                token = jwt.encode(payload,settings.SECRET_KEY)
+                # timeLimit= datetime.datetime.utcnow() + datetime.timedelta(minutes=1440) #set duration for token
+                # payload = {"user_id": f"{userRandomId}","exp":timeLimit}
+                # token = jwt.encode(payload,settings.SECRET_KEY)
                 
                 if new_userData:
                     return_data = {
@@ -1974,8 +1974,8 @@ def admin_signup(request):
                         "user_id": userRandomId,
                         "email":email,
                         "password":password,
-                        "token": f"{token}",
-                        "elapsed_time": f"{timeLimit}",
+                        # "token": f"{token}",
+                        # "elapsed_time": f"{timeLimit}",
                         }
         else:
             return_data = {
@@ -2098,5 +2098,34 @@ def admin_signin(request):
             "success": False,
             "status" : 202,
             "message": str(e)
+        }
+    return Response(return_data)
+
+# CHANGE PASSWORD API
+@api_view(["GET"])
+def admin_users_list(request):
+    try:
+        list = AdminUser.objects.all() 
+        
+        if list:
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "adminList": list,
+            }
+            return Response(return_data)
+        else:
+            return_data = {
+                "success": False,
+                "status" : 202,
+                "message": 'Sorry, there are no admin users'
+            }
+            return Response(return_data)
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 202,
+            "message": str(e)
+            # "message": 'Sorry, Something went wrong!'
         }
     return Response(return_data)

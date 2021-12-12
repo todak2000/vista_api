@@ -59,4 +59,5 @@ urlpatterns = [
     path('api/v1/admin_signup',views.admin_signup), 
     path('api/v1/admin_signin',views.admin_signin), 
     path('api/v1/admin_change_password',views.admin_change_password), 
+    path('api/v1/admin_list',views.admin_users_list), 
 ]
