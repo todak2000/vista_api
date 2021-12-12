@@ -2106,12 +2106,25 @@ def admin_signin(request):
 def admin_users_list(request):
     try:
         list = AdminUser.objects.all() 
-        
+        num = len(list)
+        adminList = []
+        for i in range(0,num):
+            role= list[i].role
+            firstname  = list[i].firstname
+            lastname = list[i].lastname 
+            email= list[i].email
+            to_json = {
+                "firstname": firstname,
+                "lastname": lastname,
+                "email": email,
+                "role": role
+            }
+            adminList.append(to_json)
         if list:
             return_data = {
                 "success": True,
                 "status" : 200,
-                "adminList": list,
+                "adminList": adminList,
             }
             return Response(return_data)
         else:
