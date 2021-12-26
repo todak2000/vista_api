@@ -125,7 +125,7 @@ class VerificationDocuments(models.Model):
     nin = models.CharField(max_length=30, verbose_name="NIN", null=True)
     idCard = models.CharField(max_length=500, verbose_name="ID Card", null=True)
     passport = models.CharField(max_length=500, verbose_name="Photo Passport", null=True)
-    proofOfAddress = models.CharField(max_length=30, verbose_name="Proof of Address", null=True)
+    proofOfAddress = models.CharField(max_length=3000, verbose_name="Proof of Address", null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
  
