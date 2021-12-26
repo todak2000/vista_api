@@ -565,7 +565,7 @@ def profile(request,decrypedToken):
         if user_id != None and user_id != '':
             #get user info
             user_data = User.objects.get(user_id=decrypedToken["user_id"])
-            # verification_data = VerificationDocuments.get(user=user_data)
+            verification_data = VerificationDocuments.objects.get(user=user_data)
             return_data = {
                 "success": True,
                 "status" : 200,
@@ -585,14 +585,14 @@ def profile(request,decrypedToken):
                         "service": f"{user_data.service}",
                         # "isVerified": f"{user_data.address}",
                     },
-            # "verification_data":
-            #         {
-            #             "bvn":verification_data.bvn,
-            #             "nin": verification_data.nin,
-            #             "idCard": verification_data.idCard,
-            #             "passport": verification_data.passport,
-            #             "proofOfAddress":verification_data.proofOfAddress
-            #         }
+            "verification_data":
+                    {
+                        "bvn":verification_data.bvn,
+                        "nin": verification_data.nin,
+                        "idCard": verification_data.idCard,
+                        "passport": verification_data.passport,
+                        "proofOfAddress":verification_data.proofOfAddress
+                    }
             }
         else:
             return_data = {
