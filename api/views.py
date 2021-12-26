@@ -2189,7 +2189,7 @@ def admin_services_list(request):
         }
     return Response(return_data)
 
-# LIST OF CATEGORIES API
+# LIST OF VERIFICATION DOCUMENTS API
 @api_view(["GET"])
 def admin_verification_data_list(request):
     try:
@@ -2209,6 +2209,7 @@ def admin_verification_data_list(request):
                 "phone": list[i].user.phone,
                 "firstname": list[i].user.firstname,
                 "lastname": list[i].user.lastname,
+                "role": list[i].user.role,
                 "isApproved": list[i].user.isVerified,
             }
             dataList.append(to_json)
@@ -2226,6 +2227,30 @@ def admin_verification_data_list(request):
                 "message": 'Sorry, there are no verfication data'
             }
             return Response(return_data)
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 202,
+            "message": str(e)
+            # "message": 'Sorry, Something went wrong!'
+        }
+    return Response(return_data)
+
+# APPROVE VERFICATION DOCUMENT API
+@api_view(["POST"])
+def admin_approve_verification_data(request):
+    user_id = request.data.get("user_id",None)
+    try:
+        # list = VerificationDocuments.objects.all() 
+        user_data = User.objects.get(user_id=user_id)
+        user_data.isVerified = True
+        user_data.save()
+        return_data = {
+            "success": True,
+            "status" : 200,
+            "message": "Verification data approved for "+str(user_data.firstname)+" "+str(user_data.lastname),
+        }
+        return Response(return_data)
     except Exception as e:
         return_data = {
             "success": False,

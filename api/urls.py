@@ -63,5 +63,6 @@ urlpatterns = [
 
     # v4
     path('api/v1/admin_services_list',views.admin_services_list), 
+    path('api/v1/admin_approve_verification_data',views.admin_approve_verification_data), 
     path('api/v1/admin_verification_data_list',views.admin_verification_data_list),
 ]
