@@ -593,7 +593,7 @@ def profile(request,decrypedToken):
             #             "passport": verification_data.passport,
             #             "proofOfAddress":verification_data.proofOfAddress
             #         }
-            # }
+            }
         else:
             return_data = {
                 "success": False,
