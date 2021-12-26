@@ -583,7 +583,7 @@ def profile(request,decrypedToken):
                         "accountno": f"{user_data.account_number}",
                         "bank": f"{user_data.bank_name}",
                         "service": f"{user_data.service}",
-                        # "isVerified": f"{user_data.address}",
+                        "isVerified": f"{user_data.isVerified}",
                     },
             "verification_data":
                     {
