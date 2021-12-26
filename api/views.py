@@ -2151,3 +2151,86 @@ def admin_users_list(request):
             # "message": 'Sorry, Something went wrong!'
         }
     return Response(return_data)
+
+# LIST OF CATEGORIES API
+@api_view(["GET"])
+def admin_services_list(request):
+    try:
+        list = ServiceCategory.objects.all() 
+        num = len(list)
+        serviceList = []
+        for i in range(0,num):
+            to_json = {
+                "amount": list[i].amount, 
+                "type": list[i].type,
+                "service": list[i].service
+            }
+            serviceList.append(to_json)
+        if list:
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "serviceList": serviceList,
+            }
+            return Response(return_data)
+        else:
+            return_data = {
+                "success": False,
+                "status" : 202,
+                "message": 'Sorry, there are no services data'
+            }
+            return Response(return_data)
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 202,
+            "message": str(e)
+            # "message": 'Sorry, Something went wrong!'
+        }
+    return Response(return_data)
+
+# LIST OF CATEGORIES API
+@api_view(["GET"])
+def admin_verification_data_list(request):
+    try:
+        list = VerificationDocuments.objects.all() 
+        num = len(list)
+        dataList = []
+        for i in range(0,num):
+            to_json = {
+                "bvn": list[i].bvn, 
+                "nin": list[i].nin,
+                "idCardURL": list[i].idCard,
+                "passportURL": list[i].passport,
+                "proofOfAddressURL": list[i].proofOfAddress,
+                "user_id": list[i].user.user_id,
+                "service": list[i].user.service,
+                "email": list[i].user.email,
+                "phone": list[i].user.phone,
+                "firstname": list[i].user.firstname,
+                "lastname": list[i].user.lastname,
+                "isApproved": list[i].user.isVerified,
+            }
+            dataList.append(to_json)
+        if list:
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "verificationDocumentList": dataList,
+            }
+            return Response(return_data)
+        else:
+            return_data = {
+                "success": False,
+                "status" : 202,
+                "message": 'Sorry, there are no verfication data'
+            }
+            return Response(return_data)
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 202,
+            "message": str(e)
+            # "message": 'Sorry, Something went wrong!'
+        }
+    return Response(return_data)

@@ -60,4 +60,7 @@ urlpatterns = [
     path('api/v1/admin_signin',views.admin_signin), 
     path('api/v1/admin_change_password',views.admin_change_password), 
     path('api/v1/admin_list',views.admin_users_list), 
+
+    # v4
+    path('api/v1/admin_services_list',views.admin_services_list), 
 ]
