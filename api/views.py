@@ -1715,7 +1715,8 @@ def user_transactions(request, user_id):
     return Response(return_data)
 
 @api_view(["POST"])
-def edit_service(request, sub_service):
+def edit_service(request):
+    sub_service = request.data.get("sub_service", None)
     new_price = request.data.get("new_price",None)
     try:
         service = ServiceCategory.objects.get(type=sub_service)
