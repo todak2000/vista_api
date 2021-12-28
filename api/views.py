@@ -566,7 +566,37 @@ def profile(request,decrypedToken):
             #get user info
             user_data = User.objects.get(user_id=decrypedToken["user_id"])
             verification_data = VerificationDocuments.objects.get(user=user_data)
-            return_data = {
+            if user_data.role == 0:
+                return_data = {
+                    "success": True,
+                    "status" : 200,
+                    "message": "Successfull",
+                    "user_details": 
+                        {
+                            "firstname": f"{user_data.firstname}",
+                            "lastname": f"{user_data.lastname}",
+                            "email": f"{user_data.email}",
+                            "phonenumber": f"{user_data.phone}",
+                            "address": f"{user_data.address}",
+                            "state": f"{user_data.state}",
+                            "role": f"{user_data.role}",
+                            "accountname": f"{user_data.account_name}",
+                            "accountno": f"{user_data.account_number}",
+                            "bank": f"{user_data.bank_name}",
+                            "service": f"{user_data.service}",
+                            "isVerified": f"{user_data.isVerified}",
+                        },
+                "verification_data":
+                        {
+                            "bvn":verification_data.bvn,
+                            "nin": verification_data.nin,
+                            "idCard": verification_data.idCard,
+                            "passport": verification_data.passport,
+                            "proofOfAddress":verification_data.proofOfAddress
+                        }
+                }
+            else:
+                return_data = {
                 "success": True,
                 "status" : 200,
                 "message": "Successfull",
@@ -583,16 +613,8 @@ def profile(request,decrypedToken):
                         "accountno": f"{user_data.account_number}",
                         "bank": f"{user_data.bank_name}",
                         "service": f"{user_data.service}",
-                        "isVerified": f"{user_data.isVerified}",
+                        # "isVerified": f"{user_data.isVerified}",
                     },
-            "verification_data":
-                    {
-                        "bvn":verification_data.bvn,
-                        "nin": verification_data.nin,
-                        "idCard": verification_data.idCard,
-                        "passport": verification_data.passport,
-                        "proofOfAddress":verification_data.proofOfAddress
-                    }
             }
         else:
             return_data = {
