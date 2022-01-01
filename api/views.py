@@ -566,7 +566,7 @@ def profile(request,decrypedToken):
             #get user info
             user_data = User.objects.get(user_id=decrypedToken["user_id"])
             verification_data = VerificationDocuments.objects.get(user=user_data)
-            if user_data.role == 0:
+            if user_data.role == "0":
                 return_data = {
                     "success": True,
                     "status" : 200,
@@ -1610,7 +1610,7 @@ def add_service_category(request):
         return_data = {
         "success": True,
         "status" : 200,
-        "message":" a new " + service +" service category has been added successfully!"
+        "message":" a new " + str(service) +" service category has been added successfully!"
         }
     else:
         return_data = {
