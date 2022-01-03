@@ -1656,6 +1656,7 @@ def all_transactions(request):
                 date_added = allTransactions[i].date_added
                 transaction_type  = allTransactions[i].transaction_type
                 amount  = allTransactions[i].amount 
+                tx_id  = allTransactions[i].pk
                 # if allTransactions[i].transaction_type == "Credit":
                 #     receiver = User.objects.get(user_id=allTransactions[i].to_id).firstname +" "+ User.objects.get(user_id=allTransactions[i].to_id).lastname 
                 #     sender = allTransactions[i].from_id
@@ -1675,7 +1676,7 @@ def all_transactions(request):
                     "amount": amount,
                     "sender": sender,
                     "receiver": receiver,
-                    # "user_id": user_id,
+                    "ref_id": tx_id,
                     "date_added": date_added.strftime('%Y-%m-%d')
                 }
                 transactionList.append(to_json)
