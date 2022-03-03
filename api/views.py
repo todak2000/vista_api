@@ -590,6 +590,7 @@ def profile(request,decrypedToken):
                             "bank": f"{user_data.bank_name}",
                             "service": f"{user_data.service}",
                             "isVerified": f"{user_data.isVerified}",
+                            "isActivated":user_data.activate
                         },
                 "verification_data":
                         {
