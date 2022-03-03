@@ -439,7 +439,7 @@ def signin(request):
                                "exp":timeLimit}
                     token = jwt.encode(payload,settings.SECRET_KEY)
                     request.session['token'] = token.decode('UTF-8')
-                    if is_valid_password and is_verified and user_data.activate == True:
+                    if is_valid_password and is_verified:
                         return_data = {
                             "success": True,
                             "status" : 200,
@@ -449,6 +449,7 @@ def signin(request):
                             "sessionToken":request.session['token'],
                             "user_id": user_data.user_id,
                             "role": f"{user_data.role}",
+                            "isActivated":user_data.activate
                         }
                         return Response(return_data)
                     elif is_verified == False:
@@ -460,15 +461,18 @@ def signin(request):
                             "token": token.decode('UTF-8')
                         }
                         return Response(return_data)
-                    elif user_data.activate == False:
-                        return_data = {
-                            "success": False,
-                            "user_id": user_data.user_id,
-                            "message": "Your account has been deactivated. Kindly reach out to the admin",
-                            "status" : 209,
-                            "token": token.decode('UTF-8')
-                        }
-                        return Response(return_data)
+                    # elif user_data.activate == False:
+                    #     return_data = {
+                    #         "success": True,
+                    #         "user_id": user_data.user_id,
+                    #         "message": "Your account has not been activated. Kindly reach out to the admin",
+                    #         "status" : 209,
+                    #         "token": token.decode('UTF-8'),
+                    #         "token-expiration": f"{timeLimit}",
+                    #         "sessionToken":request.session['token'],
+                    #         "role": f"{user_data.role}",
+                    #     }
+                    #     return Response(return_data)
                     else:
                         return_data = {
                             "success": False,
@@ -540,6 +544,7 @@ def dashboard(request,decrypedToken):
                         "accountno": f"{user_data.account_number}",
                         "bank": f"{user_data.bank_name}",
                         "service": f"{user_data.service}",
+                        "isActivated":f"{user_data.activate}",
                     }
             }
         else:
