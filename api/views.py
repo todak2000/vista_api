@@ -544,7 +544,7 @@ def dashboard(request,decrypedToken):
                         "accountno": f"{user_data.account_number}",
                         "bank": f"{user_data.bank_name}",
                         "service": f"{user_data.service}",
-                        "isActivated":f"{user_data.activate}",
+                        "isActivated":user_data.activate,
                     }
             }
         else:
