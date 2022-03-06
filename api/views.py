@@ -1239,13 +1239,20 @@ def accept_job(request):
             updateService.save()
             client_data = User.objects.get(user_id=updateService.client_id)
             
-            newClientBalance = client_data.walletBalance - float(updateService.amount)
-            client_data.walletBalance = newClientBalance
-            client_data.save()
-            newTransaction = Transaction(from_id=client_data.user_id, to_id="Vista", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount))
-            newTransaction.save()
-            newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,sp_id=sp_id,budget=updateService.amount, service_type=updateService.service_type,commission=commission, payment_mode = updateService.payment_mode)
-            newEscrow.save()
+            if client_data.walletBalance > float(updateService.amount):
+                newClientBalance = client_data.walletBalance - float(updateService.amount)
+                client_data.walletBalance = newClientBalance
+                client_data.save()
+                newTransaction = Transaction(from_id=client_data.user_id, to_id="Vista", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount))
+                newTransaction.save()
+                newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,sp_id=sp_id,budget=updateService.amount, service_type=updateService.service_type,commission=commission, payment_mode = updateService.payment_mode)
+                newEscrow.save()
+            else:
+                return_data = {
+                    "success": False,
+                    "status" : 201,
+                    "message": "Insufficient balance!"
+                }
         elif updateService.payment_mode == "cash":
             updateService.isTaken = True
             updateService.save()
