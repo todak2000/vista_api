@@ -547,7 +547,7 @@ def dashboard(request,decrypedToken):
                         "bank": f"{user_data.bank_name}",
                         "service": f"{user_data.service}",
                         "isActivated":user_data.activate,
-                        # "jobDone": doneJobs,
+                        "jobDone": doneJobs,
                     }
             }
         else:
