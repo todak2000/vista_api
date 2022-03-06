@@ -1485,7 +1485,7 @@ def artisans(request):
 @api_view(["GET"])
 def notification(request, email):
     sp = User.objects.get(email=email)
-    if sp.user_online == True and sp.engaged == False:
+    if sp.user_online == True and sp.engaged == True:
     # if sp.user_online == True:
         check = Services.objects.filter(sp_id=sp.user_id,isTaken=False, isCompleted=False)
         if len(check) == 1:
