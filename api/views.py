@@ -1176,6 +1176,9 @@ def client_confirm(request):
         # updateEscrow.isPaid = True
         # updateEscrow.save()
         newTransaction = Transaction(from_id="Vista", to_id=sp_data.user_id, transaction_type="Credit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount)* 0.9)
+        # newTransaction = Transaction(from_id="Vista", to_id=sp_data.user_id, transaction_type="Credit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount)* 0.9)
+        newTransaction2 = Transaction(from_id=client_id, to_id="Vista", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount))
+        newTransaction2.save()
         newTransaction.save()
         if updateService and sp_data  and newTransaction and updateService.payment_mode == "wallet":
             # Send mail using SMTP
