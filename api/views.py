@@ -510,6 +510,8 @@ def dashboard(request,decrypedToken):
         if user_id != None and user_id != '':
             #get user info
             user_data = User.objects.get(user_id=decrypedToken["user_id"])
+            doneJobs = Services.objects.filter(sp_id=user_id, isCompleted=True).count()
+            print("Job done: ", doneJobs)
             userTransactions=Transaction.objects.filter(Q(from_id__icontains=user_id) | Q(to_id__icontains=user_id)).order_by('-date_added')[:20]
             num = len(userTransactions)
             userTransactionsList = []
@@ -545,6 +547,7 @@ def dashboard(request,decrypedToken):
                         "bank": f"{user_data.bank_name}",
                         "service": f"{user_data.service}",
                         "isActivated":user_data.activate,
+                        # "jobDone": doneJobs,
                     }
             }
         else:
