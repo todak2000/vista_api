@@ -1488,7 +1488,8 @@ def notification(request, email):
     if sp.user_online == True and sp.engaged == True:
     # if sp.user_online == True:
         check = Services.objects.filter(sp_id=sp.user_id,isTaken=False, isCompleted=False)
-        if len(check) == 1:
+        if len(check) >= 1:
+        # if len(check) == 1:
             return_data = {
             "success": True,
             "status" : 200,
