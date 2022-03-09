@@ -47,6 +47,7 @@ urlpatterns = [
     path('api/v1/transactions',views.all_transactions), 
     path('api/v1/transactions/<user_id>',views.user_transactions),
     path('api/v1/edit_service',views.edit_service),
+    path('api/v1/commissions',views.all_commissions), 
 
     #v3
     path('api/v1/passport/<user_id>', PassportUploadView.as_view()),

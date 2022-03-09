@@ -2303,3 +2303,54 @@ def admin_approve_verification_data(request):
             # "message": 'Sorry, Something went wrong!'
         }
     return Response(return_data)
+
+@api_view(["GET"])
+def all_commissions(request):
+    try: 
+        allCommissions=Escrow.objects.all().order_by('-date_added')
+        num = len(allCommissions)
+        commissionsList = []
+        if num > 0:
+            for i in range(0,num):
+                date_added = allCommissions[i].date_added
+                job_id = allCommissions[i].job_id
+                amount  = allCommissions[i].budget 
+                id  = allCommissions[i].pk
+                
+                client = User.objects.get(user_id=allCommissions[i].client_id).email
+                sp = User.objects.get(user_id=allCommissions[i].sp_id).email
+                service_type = allCommissions[i].service_type
+
+                commission = allCommissions[i].commission
+                payment_mode = allCommissions[i].payment_mode
+                dispute = allCommissions[i].dispute
+                isPaid = allCommissions[i].isPaid
+                to_json = {
+                    "job_id": job_id,
+                    "service_type": service_type,
+                    "amount": amount,
+                    "client": client,
+                    "sp": sp,
+                    "id": id,
+                    "commission":commission,
+                    "payment_mode":payment_mode,
+                    "dispute":dispute,
+                    "isPaid":isPaid,
+                    "date_added": date_added.strftime('%Y-%m-%d')
+                }
+                commissionsList.append(to_json)
+        else:
+            commissionsList = ["There are no commissions in the database for now!."]
+        return_data = {
+            "success": True,
+            "status" : 200,
+            "message": "Successfull",
+            "all_commissions": commissionsList,
+        }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
