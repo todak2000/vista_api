@@ -1110,7 +1110,7 @@ def job_details(request, job_id):
         if job_id != None and job_id != '':
             job_data = Services.objects.get(id=job_id)
             client_data = User.objects.get(user_id=job_data.client_id)
-            sp_data = User.objects.get(user_id=job_data.sp_id) or "Nil"
+            # sp_data = User.objects.get(user_id=job_data.sp_id) or "Nil"
             # print(job_data)
             to_json = {
                 "sp_id": job_data.sp_id or "Not assigned one yet!",
@@ -1122,7 +1122,7 @@ def job_details(request, job_id):
                 "unit": job_data.unit,
                 "amount": job_data.amount,
                 "isTaken": job_data.isTaken,
-                "sp_phone": sp_data.phone or "Nill",
+                "sp_phone": User.objects.get(user_id=job_data.sp_id).phone or "Nill",
                 "client_phone": client_data.phone,
                 "clientAddress": client_data.address+ " "+client_data.state ,
                 "service_type": job_data.service_type,
