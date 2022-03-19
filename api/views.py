@@ -1110,7 +1110,7 @@ def job_details(request, job_id):
         if job_id != None and job_id != '':
             job_data = Services.objects.get(id=job_id)
             client_data = User.objects.get(user_id=job_data.client_id)
-            if User.objects.get(user_id=job_data.sp_id):
+            if User.objects.filter(user_id=job_data.sp_id) == 1:
                 sp_data = User.objects.get(user_id=job_data.sp_id)
                 sp_phone = sp_data.phone
             else:
