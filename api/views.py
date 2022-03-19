@@ -969,12 +969,12 @@ def special_service_request(request):
             mail_subject = 'Admin! Special Service Request by '+str(client_data.firstname)
             email = {
                 'subject': mail_subject,
-                'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> have requested for the services of someone with'+str(service_type)+' skills. Kindly login to your dashboard to pair him/her with a SP immediately. </p>',
-                'text': 'Hello, '+client_data.firstname+'!\n have requested for the services of someone with'+str(service_type)+' skills. Kindly login to your dashboard to pair him/her with a SP immediately. ',
+                'html': '<h4>Hello, Admin!</h4><p> '+client_data.firstname+' have requested for the services of someone with '+str(service_type)+' skills. Kindly login to your dashboard to pair him/her with a SP immediately. </p>',
+                'text': 'Hello, Admin!\n '+client_data.firstname+' have requested for the services of someone with '+str(service_type)+' skills. Kindly login to your dashboard to pair him/her with a SP immediately. ',
                 'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
                 'to': [
-                    # {'name': "MetaCraft Admin", 'email': "achykieobianwu@gmail.com"}
-                    {'name': "MetaCraft Admin", 'email': "todak2000@gmail.com"}
+                    {'name': "MetaCraft Admin", 'email': "achykieobianwu@gmail.com"}
+                    # {'name': "MetaCraft Admin", 'email': "todak2000@gmail.com"}
                 ]
             }
             SPApiProxy.smtp_send_mail(email)
