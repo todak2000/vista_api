@@ -1122,7 +1122,7 @@ def job_details(request, job_id):
                 "unit": job_data.unit,
                 "amount": job_data.amount,
                 "isTaken": job_data.isTaken,
-                "sp_phone": User.objects.get(user_id=job_data.sp_id).phone or "Nill",
+                # "sp_phone": User.objects.get(user_id=job_data.sp_id).phone or "Nill",
                 "client_phone": client_data.phone,
                 "clientAddress": client_data.address+ " "+client_data.state ,
                 "service_type": job_data.service_type,
