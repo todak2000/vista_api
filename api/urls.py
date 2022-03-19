@@ -23,6 +23,7 @@ urlpatterns = [
 
     # v2 apis starts here
     path('api/v1/request',views.service_request),
+    path('api/v1/special_request',views.special_service_request),
     path('api/v1/accept_sp',views.accept_sp), # client accepting sp
     path('api/v1/services',views.services),
     path('api/v1/job_details/<int:job_id>',views.job_details),

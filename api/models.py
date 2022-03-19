@@ -99,6 +99,7 @@ class Services(models.Model):
     unit= models.CharField(max_length=500,verbose_name="Quantity/Unit per Service", null=True)
     isTaken = models.BooleanField(default=False, verbose_name="is the Job taken by an SP")
     isRejectedSP = models.BooleanField(default=False, verbose_name="Did the first SP rejected the Job")
+    isDirectedToAdmin = models.BooleanField(default=False, verbose_name="is a Special service requiring Admin to connect client with SP")
     isCompleted = models.BooleanField(default=False, verbose_name="Did SP finish the Job")
     date_added = models.DateTimeField(default=timezone.now)
 

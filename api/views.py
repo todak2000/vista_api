@@ -93,12 +93,12 @@ def signup(request):
                 token = jwt.encode(payload,settings.SECRET_KEY)
                 
                 # Send mail using SMTP
-                mail_subject = 'Activate your Vista account.'
+                mail_subject = 'Activate your MetaCraft account.'
                 email = {
                     'subject': mail_subject,
-                    'html': '<h4>Hello, '+firstName+'!</h4><p>Kindly use the Verification Code below to activate your Vista Account</p> <h1>'+code+'</h1>',
-                    'text': 'Hello, '+firstName+'!\nKindly use the Verification Code below to activate your Vista Account',
-                    'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                    'html': '<h4>Hello, '+firstName+'!</h4><p>Kindly use the Verification Code below to activate your MetaCraft Account</p> <h1>'+code+'</h1>',
+                    'text': 'Hello, '+firstName+'!\nKindly use the Verification Code below to activate your MetaCraft Account',
+                    'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
                     'to': [
                         # {'name': firstName, 'email': "todak2000@gmail.com"}
                         {'name': firstName, 'email': email}
@@ -186,12 +186,12 @@ def resend_code(request):
                 code = getOtp.otp_code
                 if code:
                     # Resend mail using SMTP
-                    mail_subject = 'Activate Code Sent again for your Vista account.'
+                    mail_subject = 'Activate Code Sent again for your MetaCraft account.'
                     resentEmail = {
                         'subject': mail_subject,
-                        'html': '<h4>Hello, '+firstName+'!</h4><p>Kindly find the Verification Code below sent again to activate your Vista Account</p> <h1>'+code+'</h1>',
-                        'text': 'Hello, '+firstName+'!\nKindly find the Verification Code below sent againto activate your Vista Account',
-                        'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                        'html': '<h4>Hello, '+firstName+'!</h4><p>Kindly find the Verification Code below sent again to activate your MetaCraft Account</p> <h1>'+code+'</h1>',
+                        'text': 'Hello, '+firstName+'!\nKindly find the Verification Code below sent againto activate your MetaCraft Account',
+                        'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
                         'to': [
                             {'name': firstName, 'email': userData.email}
                         ]
@@ -246,12 +246,12 @@ def forgot_password(request):
 
                 if getOtp:
                     # Resend mail using SMTP
-                    mail_subject = 'Reset your Vista account Password Confirmation.'
+                    mail_subject = 'Reset your MetaCraft account Password Confirmation.'
                     resentEmail = {
                         'subject': mail_subject,
-                        'html': '<h4>Hi, '+firstName+'!</h4><p>Kindly find the Reset Code below to confirm that intend to change your Vista Account Password</p> <h1>'+getOtp.password_reset_code+'</h1>',
-                        'text': 'Hello, '+firstName+'!\nKindly find the Reset Code below to confirm that intend to change your Vista Account Password',
-                        'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                        'html': '<h4>Hi, '+firstName+'!</h4><p>Kindly find the Reset Code below to confirm that intend to change your MetaCraft Account Password</p> <h1>'+getOtp.password_reset_code+'</h1>',
+                        'text': 'Hello, '+firstName+'!\nKindly find the Reset Code below to confirm that intend to change your MetaCraft Account Password',
+                        'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
                         'to': [
                             {'name': firstName, 'email': email}
                         ]
@@ -805,16 +805,16 @@ def withdrawal(request):
             user_data.bank_name = bank
         user_data.save()
 
-        newTransaction = Transaction(from_id=user_data.user_id, to_id="Vista", transaction_type="Debit", transaction_message="Withdrawal - Cashout", amount=float(amount))
+        newTransaction = Transaction(from_id=user_data.user_id, to_id="MetaCraft", transaction_type="Debit", transaction_message="Withdrawal - Cashout", amount=float(amount))
         newTransaction.save()
         if user_data and newTransaction:
             # Send mail using SMTP
-            mail_subject = user_data.firstname+'! Vista Withdrawal Update'
+            mail_subject = user_data.firstname+'! MetaCraft Withdrawal Update'
             email = {
                 'subject': mail_subject,
                 'html': '<h4>Hello, '+user_data.firstname+'!</h4><p> Your Withdrawal request for NGN'+amount+ ' is being processed and would be sent to your account within 24 hours. Thanks</p>',
                 'text': 'Hello, '+user_data.firstname+'!\n Your withdrawal request of NGN'+amount+ ' is being processed and would be sent to your account within 24 hours',
-                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                'from': {'name': 'MetaCraft Fix', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': user_data.firstname, 'email': user_data.email}
                 ]
@@ -851,16 +851,16 @@ def fund(request):
         user_data.walletBalance = newBalance
         user_data.save()
 
-        newTransaction = Transaction(from_id="Vista", to_id=user_data.user_id, transaction_type="Credit", transaction_message="Top-up - Paystack", amount=float(amount))
+        newTransaction = Transaction(from_id="MetaCraft", to_id=user_data.user_id, transaction_type="Credit", transaction_message="Top-up - Paystack", amount=float(amount))
         newTransaction.save()
         if user_data and newTransaction:
             # Send mail using SMTP
-            mail_subject = user_data.firstname+'! Vista Top-up Update'
+            mail_subject = user_data.firstname+'! MetaCraft Top-up Update'
             email = {
                 'subject': mail_subject,
-                'html': '<h4>Hello, '+user_data.firstname+'!</h4><p> You payment of NGN'+amount+ ' to your Vista wallet was successful</p>',
-                'text': 'Hello, '+user_data.firstname+'!\n You payment of NGN'+amount+ ' to your Vista wallet was successful',
-                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                'html': '<h4>Hello, '+user_data.firstname+'!</h4><p> You payment of NGN'+amount+ ' to your MetaCraft wallet was successful</p>',
+                'text': 'Hello, '+user_data.firstname+'!\n You payment of NGN'+amount+ ' to your MetaCraft wallet was successful',
+                'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': user_data.firstname, 'email': user_data.email}
                 ]
@@ -950,6 +950,49 @@ def service_request(request):
     return Response(return_data)
 
 @api_view(["POST"])
+def special_service_request(request):
+    user_phone = request.data.get("phone",None)
+    service_type = request.data.get("service_type",None)
+    description= request.data.get("description",None)
+    # address = request.data.get("address",None)
+    # unit= request.data.get("unit",None)
+    # specific_service = request.data.get("specific_service",None)
+    # amount = request.data.get("amount",None)
+    # payment_mode = request.data.get("payment_mode",None)
+    # description = request.data.get("description",None)
+    try: 
+        client_data = User.objects.get(phone=user_phone)
+        specialService = Services(client_id=client_data.user_id,service_type=service_type,description=description, isDirectedToAdmin=True)
+        specialService.save()
+        if specialService:
+            # Send mail using SMTP
+            mail_subject = 'Admin! Special Service Request by '+str(client_data.firstname)
+            email = {
+                'subject': mail_subject,
+                'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> have requested for the services of someone with'+str(service_type)+' skills. Kindly login to your dashboard to pair him/her with a SP immediately. </p>',
+                'text': 'Hello, '+client_data.firstname+'!\n have requested for the services of someone with'+str(service_type)+' skills. Kindly login to your dashboard to pair him/her with a SP immediately. ',
+                'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
+                'to': [
+                    # {'name': "MetaCraft Admin", 'email': "achykieobianwu@gmail.com"}
+                    {'name': "MetaCraft Admin", 'email': "todak2000@gmail.com"}
+                ]
+            }
+            SPApiProxy.smtp_send_mail(email)
+        return_data = {
+            "success": True,
+            "status" : 200,
+            "message": "Sorry! there are no "+service_type+ " Service Providers around you."
+        }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
+
+
+@api_view(["POST"])
 def accept_sp(request):
     sp_id = request.data.get("sp_id",None)
     service_form= request.data.get("service_form",None)
@@ -974,12 +1017,12 @@ def accept_sp(request):
         sp_data.save()
         if newService and sp_data :
             # Send mail using SMTP
-            mail_subject = sp_data.firstname+'! Vista Job/Service Update'
+            mail_subject = sp_data.firstname+'! MetaCraft Job/Service Update'
             email = {
                 'subject': mail_subject,
                 'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> You have a new Job/Service Request from a client. Kindly login to your dashboard and accept/Reject the Job/Service.</p>',
                 'text': 'Hello, '+sp_data.firstname+'!\n You have a new Job/Service Request from a client. Kindly login to your dashboard and accept/Reject the Job/Service',
-                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': sp_data.firstname, 'email': sp_data.email}
                 ]
@@ -1127,12 +1170,12 @@ def client_cancel(request):
         sp_data.save()
         if updateService and sp_data :
             # Send mail using SMTP
-            mail_subject = sp_data.firstname+'! Vista Job/Service Update'
+            mail_subject = sp_data.firstname+'! MetaCraft Job/Service Update'
             email = {
                 'subject': mail_subject,
                 'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have canceled the Job.</p>',
                 'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have canceled the Job.',
-                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': sp_data.firstname, 'email': sp_data.email}
                 ]
@@ -1175,18 +1218,18 @@ def client_confirm(request):
         # updateEscrow=Escrow.objects.get(job_id=job_id)
         # updateEscrow.isPaid = True
         # updateEscrow.save()
-        newTransaction = Transaction(from_id="Vista", to_id=sp_data.user_id, transaction_type="Credit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount)* 0.9)
+        newTransaction = Transaction(from_id="MetaCraft", to_id=sp_data.user_id, transaction_type="Credit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount)* 0.9)
         # newTransaction2 = Transaction(from_id=client_id, to_id="Vista", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount))
         # newTransaction2.save()
         newTransaction.save()
         if updateService and sp_data  and newTransaction and updateService.payment_mode == "wallet":
             # Send mail using SMTP
-            mail_subject = sp_data.firstname+'! Vista Job/Service Update'
+            mail_subject = sp_data.firstname+'! MetaCraft Job/Service Update'
             email = {
                 'subject': mail_subject,
                 'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+str(fees)+'. Please kindly check your wallet for your earnings</p>',
                 'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+str(fees)+'. Please kindly check your wallet for your earnings',
-                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': sp_data.firstname, 'email': sp_data.email}
                 ]
@@ -1202,12 +1245,12 @@ def client_confirm(request):
             sp_data2.save()
             com = updateService.amount* 0.9
             # Send mail using SMTP
-            mail_subject = sp_data.firstname+'! Vista Job/Service Update'
+            mail_subject = sp_data.firstname+'! MetaCraft Job/Service Update'
             email = {
                 'subject': mail_subject,
                 'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have confirmed the Job Completion and you have collected the cash of sum of NGN'+str(updateService.amount)+'. Admin will reach out figure out collection of our commision of '+str(com)+' from you. Your cooperation is highly appreciated as until you do the needful, you wont be able to get another request. Thanks.</p>',
                 'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+str(updateService.amount)+'. Admin will reach out figure out collection of our commision of '+str(com)+' from you. Your cooperation is highly appreciated as until you do the needful, you wont be able to get another request. Thanks',
-                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': sp_data.firstname, 'email': sp_data.email}
                 ]
@@ -1243,7 +1286,7 @@ def accept_job(request):
                 newClientBalance = client_data.walletBalance - float(updateService.amount)
                 client_data.walletBalance = newClientBalance
                 client_data.save()
-                newTransaction = Transaction(from_id=client_data.user_id, to_id="Vista", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount))
+                newTransaction = Transaction(from_id=client_data.user_id, to_id="MetaCraft", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount))
                 newTransaction.save()
                 newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,sp_id=sp_id,budget=updateService.amount, service_type=updateService.service_type,commission=commission, payment_mode = updateService.payment_mode)
                 newEscrow.save()
@@ -1263,12 +1306,12 @@ def accept_job(request):
             updateService.save()
         if updateService and newEscrow and client_data :
             # Send mail using SMTP
-            mail_subject = client_data.firstname+'! Vista Job/Service Update'
+            mail_subject = client_data.firstname+'! MetaCraft Job/Service Update'
             email = {
                 'subject': mail_subject,
                 'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your Job/Service offer has been accepted . Kindly give the Service provider all the details needed to get the job done. thanks</p>',
                 'text': 'Hello, '+client_data.firstname+'!\n Your Job/Service offer has been accepted. Kindly give the Service provider all the details needed to get the job done. thanks',
-                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': client_data.firstname, 'email': client_data.email}
                 ]
@@ -1303,16 +1346,16 @@ def reject_job(request):
         newClientBalance = client_data.walletBalance + float(updateService.amount)
         client_data.walletBalance = newClientBalance
         client_data.save()
-        newTransaction = Transaction(from_id="Vista", to_id=client_data.user_id, transaction_type="Credit", transaction_message="Refund for Job order-"+job_id, amount=float(updateService.amount))
+        newTransaction = Transaction(from_id="MetaCraft", to_id=client_data.user_id, transaction_type="Credit", transaction_message="Refund for Job order-"+job_id, amount=float(updateService.amount))
         newTransaction.save()
         if updateService and sp_data :
             # Send mail using SMTP
-            mail_subject = client_data.firstname+'! Vista Job/Service Update'
+            mail_subject = client_data.firstname+'! MetaCraft Job/Service Update'
             email = {
                 'subject': mail_subject,
                 'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your job offer has been humbly turned down by the Service provider and your money has been refunded. Kindly check and search for another provider on the Platform. Thanks</p>',
                 'text': 'Hello, '+client_data.firstname+'!\n Your job offer has been humbly turned down by the Service provider and your money has been refunded. Kindly check and search for another provider on the Platform. Thanks',
-                'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+                'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': client_data.firstname, 'email': client_data.email}
                 ]
@@ -1339,12 +1382,12 @@ def complete_job(request):
        
         client_data = User.objects.get(user_id=updateService.client_id)
         # Send mail using SMTP
-        mail_subject = client_data.firstname+'! Vista Job/Service Update'
+        mail_subject = client_data.firstname+'! MetaCraft Job/Service Update'
         email = {
             'subject': mail_subject,
-            'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your job has been completed by the Service provider. Kindly log on to the Vista app to confirm. Thanks</p>',
-            'text': 'Hello, '+client_data.firstname+'!\n Your job has been completed by the Service provider. Kindly log on to the Vista app to confirm. Thanks',
-            'from': {'name': 'Vista Fix', 'email': 'donotreply@wastecoin.co'},
+            'html': '<h4>Hello, '+client_data.firstname+'!</h4><p> Your job has been completed by the Service provider. Kindly log on to the MetaCraft app to confirm. Thanks</p>',
+            'text': 'Hello, '+client_data.firstname+'!\n Your job has been completed by the Service provider. Kindly log on to the MetaCraft app to confirm. Thanks',
+            'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
             'to': [
                 {'name': client_data.firstname, 'email': client_data.email}
             ]
