@@ -1113,7 +1113,7 @@ def job_details(request, job_id):
             sp_data = User.objects.get(user_id=job_data.sp_id)
             # print(job_data)
             to_json = {
-                "sp_id": job_data.sp_id,
+                "sp_id": job_data.sp_id or "Not assigned one yet!",
                 "client_id": job_data.client_id,
                 "job_id": job_data.id,
                 "details": job_data.description,
@@ -1122,7 +1122,7 @@ def job_details(request, job_id):
                 "unit": job_data.unit,
                 "amount": job_data.amount,
                 "isTaken": job_data.isTaken,
-                "sp_phone": sp_data.phone,
+                "sp_phone": sp_data.phone or "Nill",
                 "client_phone": client_data.phone,
                 "clientAddress": client_data.address+ " "+client_data.state ,
                 "service_type": job_data.service_type,
