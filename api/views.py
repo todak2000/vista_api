@@ -1262,23 +1262,51 @@ def special_request_payment(request):
     amount = request.data.get("amount",None)
     job_id = request.data.get("job_id",None)
     client_id = request.data.get("client_id",None)
-    client_data = User.objects.get(user_id=client_id)
-    job_data = Services.objects.get(id=job_id)
-    if float(amount) <= client_data.walletBalance:
-        newClientBalance = client_data.walletBalance - float(amount)
-        client_data.walletBalance = newClientBalance
-        client_data.save()
-        job_data.payment_mode = "wallet"
-        job_data.save()
-        return_data = {
-            "success": True,
-            "status" : 200,
-        }
-    else:
+    try: 
+        client_data = User.objects.get(user_id=client_id)
+        job_data = Services.objects.get(id=job_id)
+        if float(amount) <= client_data.walletBalance:
+            newClientBalance = client_data.walletBalance - float(amount)
+            client_data.walletBalance = newClientBalance
+            client_data.save()
+            job_data.payment_mode = "wallet"
+            job_data.save()
+            commission = float(job_data.amount) * 0.1
+            newTransaction = Transaction(from_id=client_data.user_id, to_id="MetaCraft", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(amount))
+            newTransaction.save()
+            newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,budget=float(amount), service_type=job_data.service_type,commission=commission, payment_mode = job_data.payment_mode)
+            newEscrow.save()
+            if job_data and newTransaction and newEscrow:
+                # Send mail using SMTP
+                mail_subject = 'Admin! Special Service Request Payment made by '+str(client_data.firstname)
+                email = {
+                    'subject': mail_subject,
+                    'html': '<h4>Hello, Admin!</h4><p> '+client_data.firstname+' have just made payment for a/an '+str(job_data.service_type)+' skills. Kindly login to your dashboard to pair him/her with a SP immediately. </p>',
+                    'text': 'Hello, Admin!\n '+client_data.firstname+' have just made payment for a/an '+str(job_data.service_type)+' skills. Kindly login to your dashboard to pair him/her with a SP immediately. ',
+                    'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
+                    'to': [
+                        {'name': "MetaCraft Admin", 'email': "achykieobianwu@gmail.com"}
+                        # {'name': "MetaCraft Admin", 'email': "todak2000@gmail.com"}
+                    ]
+                }
+                SPApiProxy.smtp_send_mail(email)
+                return_data = {
+                    "success": True,
+                    "status" : 200,
+                }
+        else:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": "Oops! sorry you have insufficent balance",
+            }
+    except Exception as e:
         return_data = {
             "success": False,
             "status" : 201,
-            "message": "Oops! sorry you have insufficent balance",
+            "message": str(e),
+            # "fees": fees,
+            # "newBalance": newClientBalance
         }
     return Response(return_data)
 
