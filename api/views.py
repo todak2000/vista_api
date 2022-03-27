@@ -1257,6 +1257,30 @@ def client_cancel(request):
         }
     return Response(return_data)
 
+@api_view(["POST"])
+def special_request_payment(request):
+    amount = request.data.get("amount",None)
+    job_id = request.data.get("job_id",None)
+    client_id = request.data.get("client_id",None)
+    client_data = User.objects.get(user_id=client_id)
+    job_data = Services.objects.get(id=job_id)
+    if float(amount) <= client_data.walletBalance:
+        newClientBalance = client_data.walletBalance - float(amount)
+        client_data.walletBalance = newClientBalance
+        client_data.save()
+        job_data.payment_mode = "wallet"
+        job_data.save()
+        return_data = {
+            "success": True,
+            "status" : 200,
+        }
+    else:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": "Oops! sorry you have insufficent balance",
+        }
+    return Response(return_data)
 
 @api_view(["POST"])
 def client_confirm(request):
