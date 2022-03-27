@@ -1270,6 +1270,7 @@ def special_request_payment(request):
             client_data.walletBalance = newClientBalance
             client_data.save()
             job_data.payment_mode = "wallet"
+            job_data.amount = amount
             job_data.save()
             commission = float(amount) * 0.1
             newTransaction = Transaction(from_id=client_data.user_id, to_id="MetaCraft", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(amount))
@@ -1316,7 +1317,7 @@ def client_confirm(request):
     sp_id = request.data.get("sp_id",None)
     job_id = request.data.get("job_id",None)
     ratings = request.data.get("ratings",None)
-    try: 
+    try:
         updateService = Services.objects.get(id=int(job_id))
         updateService.isCompleted = True
         updateService.save()
@@ -1327,18 +1328,18 @@ def client_confirm(request):
         sp_data.ratings = newRatings
         sp_data.save()
         fees = (updateService.amount* 0.9)
-        if updateService.payment_mode == "wallet":
+        if updateService.payment_mode == "wallet" and updateService.sp_id != None or updateService.sp_id != "":
             newClientBalance = sp_data.walletBalance + fees
             sp_data.walletBalance = newClientBalance
             sp_data.save()
         # updateEscrow=Escrow.objects.get(job_id=job_id)
         # updateEscrow.isPaid = True
         # updateEscrow.save()
-        newTransaction = Transaction(from_id="MetaCraft", to_id=sp_data.user_id, transaction_type="Credit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount)* 0.9)
+            newTransaction = Transaction(from_id="MetaCraft", to_id=sp_data.user_id, transaction_type="Credit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount)* 0.9)
         # newTransaction2 = Transaction(from_id=client_id, to_id="Vista", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(updateService.amount))
         # newTransaction2.save()
-        newTransaction.save()
-        if updateService and sp_data  and newTransaction and updateService.payment_mode == "wallet":
+            newTransaction.save()
+        if updateService and sp_data and updateService.payment_mode == "wallet":
             # Send mail using SMTP
             mail_subject = sp_data.firstname+'! MetaCraft Job/Service Update'
             email = {
@@ -1355,7 +1356,7 @@ def client_confirm(request):
                 "success": True,
                 "status" : 200,
             }
-        elif updateService and sp_data  and newTransaction and updateService.payment_mode == "cash":
+        elif updateService and sp_data  and updateService.payment_mode == "cash":
             sp_data2 = User.objects.get(user_id=sp_id)
             sp_data2.owingVistaCommission = True
             sp_data2.save()
