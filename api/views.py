@@ -1112,6 +1112,10 @@ def services(request,decrypedToken):
                 isRejectedSP = userServices[i].isRejectedSP
                 isCompleted = userServices[i].isCompleted
                 isSpecialRequest = userServices[i].isDirectedToAdmin
+                if userServices[i].payment_mode == "wallet":
+                    isPaid = True
+                else:
+                    isPaid = False
                 to_json = {
                     "sp_id": sp_id,
                     "client_id": client_id,
@@ -1121,6 +1125,7 @@ def services(request,decrypedToken):
                     "isRejectedSP": isRejectedSP,
                     "isCompleted": isCompleted,
                     "isSpecialRequest":isSpecialRequest,
+                    "hasPaid": isPaid,
                     "date_added": date_added,
                 }
                 userServicesList.append(to_json)
