@@ -1170,6 +1170,10 @@ def job_details(request, job_id):
             else:
                 sp_phone = "Nil"
             # print(job_data)
+            if job_data.payment_mode == "wallet":
+                    isPaid = True
+            else:
+                isPaid = False
             to_json = {
                 "sp_id": job_data.sp_id or "Not assigned one yet!",
                 "client_id": job_data.client_id,
@@ -1187,8 +1191,10 @@ def job_details(request, job_id):
                 "isRejectedSP": job_data.isRejectedSP,
                 "isCompleted": job_data.isCompleted,
                 "date_added": job_data.date_added,
+                "isSpecialRequest":job_data.isDirectedToAdmin,
+                "hasPaid":isPaid
             }
-            
+
             if job_data:
                 return_data = {
                     "success": True,
