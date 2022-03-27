@@ -85,18 +85,18 @@ class Services(models.Model):
     class Meta:
         db_table = "Services_table"
     # Services
-    client_id = models.TextField(max_length=20,verbose_name="Client ID",null=True)
-    sp_id = models.TextField(max_length=20,verbose_name="Service Provider ID",null=True)
-    amount= models.FloatField(max_length=500,verbose_name="Service Charge Amount", null=True)
-    service_type= models.TextField(max_length=500,verbose_name="Type of Services/Job", null=True)
-    sp_reject_id= models.TextField(max_length=500,verbose_name="Service Provider ID who rejected job", null=True)
+    client_id = models.TextField(max_length=20,verbose_name="Client ID",null=True, blank=True)
+    sp_id = models.TextField(max_length=20,verbose_name="Service Provider ID",null=True, blank=True)
+    amount= models.FloatField(max_length=500,verbose_name="Service Charge Amount", null=True,blank=True)
+    service_type= models.TextField(max_length=500,verbose_name="Type of Services/Job", null=True,blank=True)
+    sp_reject_id= models.TextField(max_length=500,verbose_name="Service Provider ID who rejected job", null=True, blank=True)
     
-    service_form= models.CharField(max_length=500,verbose_name="Service Type/form", null=True)
-    address= models.CharField(max_length=500,verbose_name="Address", null=True)
-    payment_mode= models.CharField(max_length=500,verbose_name="Payment Mode", null=True)
-    description= models.CharField(max_length=10500,verbose_name="Description", null=True)
-    specific_service = models.CharField(max_length=500,verbose_name="Exact Service", null=True)
-    unit= models.CharField(max_length=500,verbose_name="Quantity/Unit per Service", null=True)
+    service_form= models.CharField(max_length=500,verbose_name="Service Type/form", null=True, blank=True)
+    address= models.CharField(max_length=500,verbose_name="Address", null=True, blank=True)
+    payment_mode= models.CharField(max_length=500,verbose_name="Payment Mode", null=True, blank=True)
+    description= models.CharField(max_length=10500,verbose_name="Description", null=True, blank=True)
+    specific_service = models.CharField(max_length=500,verbose_name="Exact Service", null=True, blank=True)
+    unit= models.CharField(max_length=500,verbose_name="Quantity/Unit per Service", null=True, blank=True)
     isTaken = models.BooleanField(default=False, verbose_name="is the Job taken by an SP")
     isRejectedSP = models.BooleanField(default=False, verbose_name="Did the first SP rejected the Job")
     isDirectedToAdmin = models.BooleanField(default=False, verbose_name="is a Special service requiring Admin to connect client with SP")
@@ -123,11 +123,11 @@ class VerificationDocuments(models.Model):
     class Meta:
         db_table = 'SPs Verification Documents'
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    bvn = models.CharField(max_length=30, verbose_name="BVN", null=True)
-    nin = models.CharField(max_length=30, verbose_name="NIN", null=True)
-    idCard = models.CharField(max_length=500, verbose_name="ID Card", null=True)
-    passport = models.CharField(max_length=500, verbose_name="Photo Passport", null=True)
-    proofOfAddress = models.CharField(max_length=3000, verbose_name="Proof of Address", null=True)
+    bvn = models.CharField(max_length=30, verbose_name="BVN", null=True, blank=True)
+    nin = models.CharField(max_length=30, verbose_name="NIN", null=True,blank=True)
+    idCard = models.CharField(max_length=500, verbose_name="ID Card", null=True,blank=True)
+    passport = models.CharField(max_length=500, verbose_name="Photo Passport", null=True,blank=True)
+    proofOfAddress = models.CharField(max_length=3000, verbose_name="Proof of Address", null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
  
@@ -138,7 +138,7 @@ class Gallery(models.Model):
     class Meta:
         db_table = "SP Galley"
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    imageUrl = models.CharField(max_length=500,verbose_name="Image URL")
+    imageUrl = models.CharField(max_length=500,verbose_name="Image URL",blank=True)
     date_added = models.DateTimeField(default=timezone.now)
 
 class AdminUser(models.Model):
