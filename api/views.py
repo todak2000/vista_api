@@ -1271,7 +1271,7 @@ def special_request_payment(request):
             client_data.save()
             job_data.payment_mode = "wallet"
             job_data.save()
-            commission = float(job_data.amount) * 0.1
+            commission = float(amount) * 0.1
             newTransaction = Transaction(from_id=client_data.user_id, to_id="MetaCraft", transaction_type="Debit", transaction_message="Payment for Job order-"+job_id, amount=float(amount))
             newTransaction.save()
             newEscrow=Escrow(job_id=job_id,client_id=client_data.user_id,budget=float(amount), service_type=job_data.service_type,commission=commission, payment_mode = job_data.payment_mode)
