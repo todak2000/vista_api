@@ -952,7 +952,7 @@ def service_request(request):
 @api_view(["GET"])
 def special_request_admin(request):
     try:
-        specialRequest = Services.objects.filter(isDirectedToAdmin=True)
+        specialRequest = Services.objects.filter(isDirectedToAdmin=True).order_by('-date_added')
         num = len(specialRequest)
         specialRequestList = []
         for i in range(0,num):
@@ -965,6 +965,7 @@ def special_request_admin(request):
             service_type  = specialRequest[i].service_type
             description  = specialRequest[i].description
             payment_mode = specialRequest[i].payment_mode
+            amount = specialRequest[i].amount
             if payment_mode == "wallet":
                 isPaid = True
             else:
@@ -981,6 +982,7 @@ def special_request_admin(request):
                 "hasPaid": isPaid,
                 "isCompleted": isCompleted,
                 "date_added": date_added,
+                "amount":amount
             }
             specialRequestList.append(to_json)
         if num > 0:
@@ -2558,4 +2560,3 @@ def all_commissions(request):
             "status" : 201,
             "message": str(e)
         }
-    return Response(return_data)
