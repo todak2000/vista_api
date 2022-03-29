@@ -949,7 +949,7 @@ def service_request(request):
         }
     return Response(return_data)
 
-@api_view(["POST"])
+@api_view(["GET"])
 def special_request_admin(request):
     specialRequest = Services.objects.filter(isDirectedToAdmin=True)
     num = len(specialRequest)
