@@ -1019,7 +1019,7 @@ def special_service_request(request):
     # description = request.data.get("description",None)
     try: 
         client_data = User.objects.get(phone=user_phone)
-        specialService = Services(client_id=client_data.user_id,service_type=service_type,description=description, isDirectedToAdmin=True)
+        specialService = Services(client_id=client_data.user_id,service_type=service_type,description=description, isDirectedToAdmin=True, address=client_data.address)
         specialService.save()
         if specialService:
             # Send mail using SMTP
@@ -1038,7 +1038,6 @@ def special_service_request(request):
         return_data = {
             "success": True,
             "status" : 200,
-            "message": "Sorry! there are no "+service_type+ " Service Providers around you."
         }
     except Exception as e:
         return_data = {
@@ -1049,11 +1048,11 @@ def special_service_request(request):
     return Response(return_data)
 
 @api_view(["POST"])
-def special_service_update_amount(request):
+def special_request_update_amount(request):
     job_id = request.data.get("job_id",None)
     amount = request.data.get("amount",None)
     try: 
-        jobDetails = Services.objects.get(id=job_id)
+        jobDetails = Services.objects.get(id=int(job_id))
         jobDetails.amount = float(amount)
         jobDetails.save()
 
@@ -1075,7 +1074,6 @@ def special_service_update_amount(request):
         return_data = {
             "success": True,
             "status" : 200,
-            "message": "Sorry! there are no "+jobDetails.service_type+ " Service Providers around you."
         }
     except Exception as e:
         return_data = {
@@ -1085,6 +1083,43 @@ def special_service_update_amount(request):
         }
     return Response(return_data)
 
+@api_view(["POST"])
+def special_service_update_sp(request):
+    job_id = request.data.get("job_id",None)
+    sp_email = request.data.get("sp_email",None)
+    try: 
+        sp_data = User.objects.get(email=sp_email)
+        jobDetails = Services.objects.get(id=int(job_id))
+        jobDetails.sp_id = sp_data.user_id
+        jobDetails.isTaken = True
+        jobDetails.save()
+
+        if jobDetails:
+            
+            # Send mail using SMTP
+            mail_subject = 'Hello '+str(client_data.firstname)+'! Your Special Service Request has been updated.'
+            email = {
+                'subject': mail_subject,
+                'html': '<h4>Hello, '+str(client_data.firstname)+'!</h4><p> Your service request for  the services of someone with '+str(jobDetails.service_type)+' skills has been approved and updated. Kindly login to your dashboard to accept the amount to be paid </p>',
+                'text': 'Hello, '+str(client_data.firstname)+'!\n Your service request for  the services of someone with '+str(jobDetails.service_type)+' skills has been approved and updated. Kindly login to your dashboard to accept the amount to be paid. ',
+                'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
+                'to': [
+                    {'name': client_data.firstname, 'email': client_data.email}
+                    # {'name': "MetaCraft Admin", 'email': "todak2000@gmail.com"}
+                ]
+            }
+            SPApiProxy.smtp_send_mail(email)
+        return_data = {
+            "success": True,
+            "status" : 200,
+        }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
 
 @api_view(["POST"])
 def accept_sp(request):
@@ -1311,7 +1346,7 @@ def special_request_payment(request):
     client_id = request.data.get("client_id",None)
     try: 
         client_data = User.objects.get(user_id=client_id)
-        job_data = Services.objects.get(id=job_id)
+        job_data = Services.objects.get(id=int(job_id))
         if float(amount) <= client_data.walletBalance:
             newClientBalance = client_data.walletBalance - float(amount)
             client_data.walletBalance = newClientBalance
