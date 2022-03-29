@@ -1046,6 +1046,43 @@ def special_service_request(request):
         }
     return Response(return_data)
 
+@api_view(["POST"])
+def special_service_update_amount(request):
+    job_id = request.data.get("job_id",None)
+    amount = request.data.get("amount",None)
+    try: 
+        jobDetails = Services.objects.get(id=job_id)
+        jobDetails.amount = float(amount)
+        jobDetails.save()
+
+        if jobDetails:
+            client_data = User.objects.get(user_id=jobDetails.client_id)
+            # Send mail using SMTP
+            mail_subject = 'Hello '+str(client_data.firstname)+'! Your Special Service Request has been updated.'
+            email = {
+                'subject': mail_subject,
+                'html': '<h4>Hello, '+str(client_data.firstname)+'!</h4><p> Your service request for  the services of someone with '+str(jobDetails.service_type)+' skills has been approved and updated. Kindly login to your dashboard to accept the amount to be paid </p>',
+                'text': 'Hello, '+str(client_data.firstname)+'!\n Your service request for  the services of someone with '+str(jobDetails.service_type)+' skills has been approved and updated. Kindly login to your dashboard to accept the amount to be paid. ',
+                'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
+                'to': [
+                    {'name': client_data.firstname, 'email': client_data.email}
+                    # {'name': "MetaCraft Admin", 'email': "todak2000@gmail.com"}
+                ]
+            }
+            SPApiProxy.smtp_send_mail(email)
+        return_data = {
+            "success": True,
+            "status" : 200,
+            "message": "Sorry! there are no "+jobDetails.service_type+ " Service Providers around you."
+        }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
+
 
 @api_view(["POST"])
 def accept_sp(request):

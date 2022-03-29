@@ -70,4 +70,5 @@ urlpatterns = [
 
     path('api/v1/admin_special_request',views.special_request_admin),
     path('api/v1/special_request_payment',views.special_request_payment),
+    path('api/v1/special_request_amount_update',views.special_service_update_amount),
 ]
