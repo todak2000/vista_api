@@ -951,51 +951,58 @@ def service_request(request):
 
 @api_view(["GET"])
 def special_request_admin(request):
-    specialRequest = Services.objects.filter(isDirectedToAdmin=True)
-    num = len(specialRequest)
-    specialRequestList = []
-    for i in range(0,num):
-        client_address = User.objects.get(user_id=specialRequest[i].client_id).address + " "+ User.objects.get(user_id=specialRequest[i].client_id).state
-        client_phone = User.objects.get(user_id=specialRequest[i].client_id).phone
-        client= User.objects.get(user_id=specialRequest[i].client_id).firstname + " "+ User.objects.get(user_id=specialRequest[i].client_id).lastname
-        client_email = User.objects.get(user_id=specialRequest[i].client_id).email
-        job_id = specialRequest[i].id
-        date_added = specialRequest[i].date_added
-        service_type  = specialRequest[i].service_type
-        description  = specialRequest[i].description
-        payment_mode = specialRequest[i].payment_mode
-        if payment_mode == "wallet":
-            isPaid = True
-        else:
-            isPaid = False
-        isCompleted = specialRequest[i].isCompleted
-        to_json = {
-            "client_address": client_address,
-            "client_phone": client_phone,
-            "client_name":client,
-            "client_email":client_email,
-            "job_id": job_id,
-            "job_description": description,
-            "service_type": service_type,
-            "hasPaid": isPaid,
-            "isCompleted": isCompleted,
-            "date_added": date_added,
-        }
-        specialRequestList.append(to_json)
-    if num > 0:
+    try:
+        specialRequest = Services.objects.filter(isDirectedToAdmin=True)
+        num = len(specialRequest)
+        specialRequestList = []
+        for i in range(0,num):
+            client_address = User.objects.get(user_id=specialRequest[i].client_id).address + " "+ User.objects.get(user_id=specialRequest[i].client_id).state
+            client_phone = User.objects.get(user_id=specialRequest[i].client_id).phone
+            client= User.objects.get(user_id=specialRequest[i].client_id).firstname + " "+ User.objects.get(user_id=specialRequest[i].client_id).lastname
+            client_email = User.objects.get(user_id=specialRequest[i].client_id).email
+            job_id = specialRequest[i].id
+            date_added = specialRequest[i].date_added
+            service_type  = specialRequest[i].service_type
+            description  = specialRequest[i].description
+            payment_mode = specialRequest[i].payment_mode
+            if payment_mode == "wallet":
+                isPaid = True
+            else:
+                isPaid = False
+            isCompleted = specialRequest[i].isCompleted
+            to_json = {
+                "client_address": client_address,
+                "client_phone": client_phone,
+                "client_name":client,
+                "client_email":client_email,
+                "job_id": job_id,
+                "job_description": description,
+                "service_type": service_type,
+                "hasPaid": isPaid,
+                "isCompleted": isCompleted,
+                "date_added": date_added,
+            }
+            specialRequestList.append(to_json)
+        if num > 0:
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": "Successfull",
+                "specialRequestList": specialRequestList
+            }
+        if num <= 0:
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": "Sorry! You have no Special Job requests"
+            }
+    except Exception as e:
         return_data = {
-            "success": True,
-            "status" : 200,
-            "message": "Successfull",
-            "specialRequestList": specialRequestList
+            "success": False,
+            "status" : 201,
+            "message": str(e)
         }
-    if num <= 0:
-        return_data = {
-            "success": True,
-            "status" : 200,
-            "message": "Sorry! You have no Special Job requests"
-        }
-
+    return Response(return_data)
 @api_view(["POST"])
 def special_service_request(request):
     user_phone = request.data.get("phone",None)
