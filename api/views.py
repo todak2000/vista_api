@@ -1089,19 +1089,20 @@ def special_service_update_sp(request):
     sp_email = request.data.get("sp_email",None)
     try: 
         sp_data = User.objects.get(email=sp_email)
+        
         jobDetails = Services.objects.get(id=int(job_id))
         jobDetails.sp_id = sp_data.user_id
         jobDetails.isTaken = True
         jobDetails.save()
 
         if jobDetails:
-            
+            client_data = User.objects.get(user_id=jobDetails.client_id)
             # Send mail using SMTP
             mail_subject = 'Hello '+str(client_data.firstname)+'! Your Special Service Request has been updated.'
             email = {
                 'subject': mail_subject,
-                'html': '<h4>Hello, '+str(client_data.firstname)+'!</h4><p> Your service request for  the services of someone with '+str(jobDetails.service_type)+' skills has been approved and updated. Kindly login to your dashboard to accept the amount to be paid </p>',
-                'text': 'Hello, '+str(client_data.firstname)+'!\n Your service request for  the services of someone with '+str(jobDetails.service_type)+' skills has been approved and updated. Kindly login to your dashboard to accept the amount to be paid. ',
+                'html': '<h4>Hello, '+str(client_data.firstname)+'!</h4><p> Your service request for  the services of someone with '+str(jobDetails.service_type)+' skills has been approved and updated. A Service provider has been connected. Kindly login to your dashboard to accept the amount to be paid </p>',
+                'text': 'Hello, '+str(client_data.firstname)+'!\n Your service request for  the services of someone with '+str(jobDetails.service_type)+' skills has been approved and updated. A Service provider has been connected. Kindly login to your dashboard to accept the amount to be paid. ',
                 'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': client_data.firstname, 'email': client_data.email}
