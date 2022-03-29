@@ -29,7 +29,7 @@ cloudinary.config(cloud_name=config("cloud_name"),
 SECRET_KEY = config("secret_key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
