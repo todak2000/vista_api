@@ -1095,6 +1095,9 @@ def special_service_update_sp(request):
         jobDetails.isTaken = True
         jobDetails.save()
 
+        sp_data.engaged = True
+        sp_data.save()
+
         if jobDetails:
             client_data = User.objects.get(user_id=jobDetails.client_id)
             # Send mail using SMTP
@@ -1768,6 +1771,36 @@ def notification(request, email):
         "message": "SP not online"
         }
     return Response(return_data)
+
+@api_view(["GET"])
+def special_request_notification(request, email):
+    client = User.objects.get(email=email)
+    if client:
+    # if sp.user_online == True:
+        check = Services.objects.filter(client_id=client.user_id,isTaken=False, isCompleted=False, isRejectedSP=False, isDirectedToAdmin=True,amount__isnull=False)
+        # if len(check) >= 1:
+        if len(check) == 1:
+            return_data = {
+            "success": True,
+            "status" : 200,
+            "check": len(check),
+            "message": "You have a new request"
+            }
+        else:
+            return_data = {
+            "success": False,
+            "status" : 202,
+            "check": len(check),
+            "message": "No Notification"
+            }
+    else:
+        return_data = {
+        "success": False,
+        "status" : 202,
+        "message": "User does not exist"
+        }
+    return Response(return_data)
+
 
 @api_view(["GET"])
 def service_list(request, service_type):
