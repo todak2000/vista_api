@@ -1100,7 +1100,7 @@ def special_service_update_sp(request):
 
         if jobDetails:
             client_data = User.objects.get(user_id=jobDetails.client_id)
-            # Send mail using SMTP
+            # Send mail using SMTP (client)
             mail_subject = 'Hello '+str(client_data.firstname)+'! Your Special Service Request has been updated.'
             email = {
                 'subject': mail_subject,
@@ -1109,6 +1109,19 @@ def special_service_update_sp(request):
                 'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': client_data.firstname, 'email': client_data.email}
+                    # {'name': "MetaCraft Admin", 'email': "todak2000@gmail.com"}
+                ]
+            }
+            SPApiProxy.smtp_send_mail(email)
+            # Send mail using SMTP (SP)
+            mail_subject = 'Hello '+str(sp_data.firstname)+'! You have a Service Request.'
+            email = {
+                'subject': mail_subject,
+                'html': '<h4>Hello, '+str(sp_data.firstname)+'!</h4><p> A client request for  '+str(jobDetails.service_type)+' skills has been approved and you have been assigned to do the job. Kindly login to accept Immediatey. Thanks</p>',
+                'text': 'Hello, '+str(sp_data.firstname)+'!\n A client request for  '+str(jobDetails.service_type)+' skills has been approved and you have been assigned to do the job. Kindly login to accept Immediatey. Thanks',
+                'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
+                'to': [
+                    {'name': sp_data.firstname, 'email': sp_data.email}
                     # {'name': "MetaCraft Admin", 'email': "todak2000@gmail.com"}
                 ]
             }
