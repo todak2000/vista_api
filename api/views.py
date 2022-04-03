@@ -2634,3 +2634,60 @@ def all_commissions(request):
             "message": str(e)
         }
     return Response(return_data)
+
+@api_view(["POST"])
+def special_service_sp_list(request, job_id):
+
+    try: 
+        job_data = Services.objects.get(id=job_id)
+        client_data = User.objects.get(user_id=job_data.client_id)
+        serviceProviders=User.objects.filter(role='0',state=client_data.state, service=job_data.service_form, engaged=False, user_online=True, owingVistaCommission=False).order_by('-date_added')[:50]
+        num = len(serviceProviders)
+        serviceProvidersList = []
+        for i in range(0,num):
+            sp_id = serviceProviders[i].user_id
+            sp_firstname = serviceProviders[i].firstname
+            sp_lastname = serviceProviders[i].lastname
+            date_added = serviceProviders[i].date_added
+            sp_address  = serviceProviders[i].address
+            sp_phone  = serviceProviders[i].phone 
+            sp_state = serviceProviders[i].state
+            sp_ratings = serviceProviders[i].ratings
+            # longitude = serviceProviders[i].longitude
+            # latitude = serviceProviders[i].latitude
+            to_json = {
+                "sp_id": sp_id,
+                "sp_firstname": sp_firstname,
+                "sp_lastname": sp_lastname,
+                "sp_address": sp_address,
+                "sp_phone": sp_phone,
+                "sp_state":sp_state,
+                "sp_ratings":sp_ratings,
+                "distance": distance.distance(float(client_data.longitude),float(client_data.latitude), float(longitude),float(latitude)),
+                # "longitude": longitude,
+                # "latitude": latitude,
+                "date_added": date_added,
+            }
+            serviceProvidersList.append(to_json)
+        if num > 0:
+            # newService = Services(client_id=client_data.user_id, amount=amount, service_type=service_type, service_form=service_form, address=address, payment_mode=payment_mode,description=description, specific_service=specific_service, unit=unit)
+            # newService.save()
+            return_data = {
+                "success": True,
+                "status" : 200,
+                # "job_id": newService.id, 
+                "serviceProviders": serviceProvidersList
+            }
+        if num <= 0:
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": "Sorry! there are no "+job_data.service_form+ " Service Providers around you."
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
