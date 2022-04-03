@@ -2641,7 +2641,7 @@ def special_service_sp_list(request, job_id):
     try: 
         job_data = Services.objects.get(id=job_id)
         client_data = User.objects.get(user_id=job_data.client_id)
-        serviceProviders=User.objects.filter(role='0',state=client_data.state, service=job_data.service_form, engaged=False, user_online=True, owingVistaCommission=False).order_by('-date_added')[:50]
+        serviceProviders=User.objects.filter(role='0',state=client_data.state, service=job_data.service_type, engaged=False, user_online=True, owingVistaCommission=False).order_by('-date_added')[:50]
         num = len(serviceProviders)
         serviceProvidersList = []
         for i in range(0,num):
@@ -2682,7 +2682,7 @@ def special_service_sp_list(request, job_id):
             return_data = {
                 "success": True,
                 "status" : 200,
-                "message": "Sorry! there are no "+str(job_data.service_form)+ " Service Providers around you."
+                "message": "Sorry! there are no "+str(job_data.service_type)+ " Service Providers around you."
             }
     except Exception as e:
         return_data = {
