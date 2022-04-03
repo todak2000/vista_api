@@ -2682,7 +2682,7 @@ def special_service_sp_list(request, job_id):
             return_data = {
                 "success": True,
                 "status" : 200,
-                "message": "Sorry! there are no "+job_data.service_form+ " Service Providers around you."
+                "message": "Sorry! there are no "+str(job_data.service_form)+ " Service Providers around you."
             }
     except Exception as e:
         return_data = {
