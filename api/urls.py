@@ -74,5 +74,5 @@ urlpatterns = [
     path('api/v1/special_request_sp_update',views.special_service_update_sp),
 
     path('api/v1/special_request_notification/<email>',views.special_request_notification),
-    path('api/v1/assign_sp_list/<email>',views.special_service_sp_list),
+    path('api/v1/assign_sp_list',views.special_service_sp_list),
 ]
