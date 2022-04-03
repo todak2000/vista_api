@@ -2593,8 +2593,8 @@ def all_commissions(request):
                 amount  = allCommissions[i].budget 
                 id  = allCommissions[i].pk
                 
-                client = User.objects.get(user_id=allCommissions[i].client_id).email
-                sp = User.objects.get(user_id=allCommissions[i].sp_id).email
+                # client = User.objects.get(user_id=allCommissions[i].client_id).email
+                # sp = User.objects.get(user_id=allCommissions[i].sp_id).email
                 service_type = allCommissions[i].service_type
 
                 commission = allCommissions[i].commission
@@ -2605,8 +2605,8 @@ def all_commissions(request):
                     "job_id": job_id,
                     "service_type": service_type,
                     "amount": amount,
-                    "client": client,
-                    "sp": sp,
+                    # "client": client,
+                    # "sp": sp,
                     "id": id,
                     "commission":commission,
                     "payment_mode":payment_mode,
