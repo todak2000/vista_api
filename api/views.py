@@ -2629,3 +2629,4 @@ def all_commissions(request):
             "status" : 201,
             "message": str(e)
         }
+    return Response(return_data)
