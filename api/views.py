@@ -2594,10 +2594,11 @@ def all_commissions(request):
                 id  = allCommissions[i].pk
                 
                 client = User.objects.get(user_id=allCommissions[i].client_id).email
-                if allCommissions[i].sp_id != None or allCommissions[i].sp_id != "":
-                    sp = User.objects.get(user_id=allCommissions[i].sp_id).email
-                else:
-                    sp = "no sp has been assigned yet!"
+                # if allCommissions[i].sp_id != None or allCommissions[i].sp_id != "":
+                #     sp = User.objects.get(user_id=allCommissions[i].sp_id).email
+                # else:
+                #     sp = "no sp has been assigned yet!"
+                sp = allCommissions[i].sp_id
                 service_type = allCommissions[i].service_type
 
                 commission = allCommissions[i].commission
