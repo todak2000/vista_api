@@ -2635,7 +2635,7 @@ def all_commissions(request):
         }
     return Response(return_data)
 
-@api_view(["POST"])
+@api_view(["GET"])
 def special_service_sp_list(request, job_id):
 
     try: 
