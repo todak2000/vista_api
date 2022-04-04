@@ -2662,6 +2662,7 @@ def special_service_sp_list(request, job_id):
             sp_firstname = serviceProviders[i].firstname
             sp_lastname = serviceProviders[i].lastname
             date_added = serviceProviders[i].date_added
+            sp_email = serviceProviders[i].email
             sp_address  = serviceProviders[i].address
             sp_phone  = serviceProviders[i].phone 
             sp_state = serviceProviders[i].state
@@ -2675,6 +2676,7 @@ def special_service_sp_list(request, job_id):
                 "sp_address": sp_address,
                 "sp_phone": sp_phone,
                 "sp_state":sp_state,
+                "sp_email":sp_email,
                 "sp_ratings":sp_ratings,
                 "distance": distance.distance(float(client_data.longitude),float(client_data.latitude), float(longitude),float(latitude)),
                 # "longitude": longitude,
