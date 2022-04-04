@@ -2666,8 +2666,8 @@ def special_service_sp_list(request, job_id):
             sp_phone  = serviceProviders[i].phone 
             sp_state = serviceProviders[i].state
             sp_ratings = serviceProviders[i].ratings
-            # longitude = serviceProviders[i].longitude
-            # latitude = serviceProviders[i].latitude
+            longitude = serviceProviders[i].longitude
+            latitude = serviceProviders[i].latitude
             to_json = {
                 "sp_id": sp_id,
                 "sp_firstname": sp_firstname,
