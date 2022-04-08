@@ -960,12 +960,14 @@ def special_request_admin(request):
             client_phone = User.objects.get(user_id=specialRequest[i].client_id).phone
             client= User.objects.get(user_id=specialRequest[i].client_id).firstname + " "+ User.objects.get(user_id=specialRequest[i].client_id).lastname
             client_email = User.objects.get(user_id=specialRequest[i].client_id).email
+            commission = Escrow.objects.get(job_id=specialRequest[i].id).commission
             job_id = specialRequest[i].id
             date_added = specialRequest[i].date_added
             service_type  = specialRequest[i].service_type
             description  = specialRequest[i].description
             payment_mode = specialRequest[i].payment_mode
             amount = specialRequest[i].amount
+            sp_fees = amount - commission
             if payment_mode == "wallet":
                 isPaid = True
             else:
@@ -982,7 +984,9 @@ def special_request_admin(request):
                 "hasPaid": isPaid,
                 "isCompleted": isCompleted,
                 "date_added": date_added,
-                "amount":amount
+                "amount":amount,
+                "job_commission":commission,
+                "sp_fees": sp_fees
             }
             specialRequestList.append(to_json)
         if num > 0:
