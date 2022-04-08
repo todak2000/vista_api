@@ -960,14 +960,19 @@ def special_request_admin(request):
             client_phone = User.objects.get(user_id=specialRequest[i].client_id).phone
             client= User.objects.get(user_id=specialRequest[i].client_id).firstname + " "+ User.objects.get(user_id=specialRequest[i].client_id).lastname
             client_email = User.objects.get(user_id=specialRequest[i].client_id).email
-            commission = Escrow.objects.get(job_id=specialRequest[i].id).commission
+            
             job_id = specialRequest[i].id
             date_added = specialRequest[i].date_added
             service_type  = specialRequest[i].service_type
             description  = specialRequest[i].description
             payment_mode = specialRequest[i].payment_mode
             amount = specialRequest[i].amount
-            sp_fees = amount - commission
+            if Escrow.objects.filter(job_id=specialRequest[i].id).commission == 1:
+                commission = Escrow.objects.get(job_id=specialRequest[i].id).commission
+                sp_fees = amount - commission
+            else:
+                commission = "Nil"
+                sp_fees = "Yet to be Calculated"
             if payment_mode == "wallet":
                 isPaid = True
             else:
@@ -1025,6 +1030,7 @@ def special_service_request(request):
         client_data = User.objects.get(phone=user_phone)
         specialService = Services(client_id=client_data.user_id,service_type=service_type,description=description, isDirectedToAdmin=True, address=client_data.address)
         specialService.save()
+        
         if specialService:
             # Send mail using SMTP
             mail_subject = 'Admin! Special Service Request by '+str(client_data.firstname)
