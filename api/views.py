@@ -967,7 +967,7 @@ def special_request_admin(request):
             description  = specialRequest[i].description
             payment_mode = specialRequest[i].payment_mode
             amount = specialRequest[i].amount
-            if Escrow.objects.filter(job_id=specialRequest[i].id).commission == 1:
+            if Escrow.objects.filter(job_id=specialRequest[i].id) == 1:
                 commission = Escrow.objects.get(job_id=specialRequest[i].id).commission
                 sp_fees = amount - commission
             else:
