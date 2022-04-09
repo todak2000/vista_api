@@ -1077,14 +1077,13 @@ def special_request_update_amount(request):
                 'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': client_data.firstname, 'email': client_data.email}
-                    # {'name': "MetaCraft Admin", 'email': "todak2000@gmail.com"}
                 ]
             }
             SPApiProxy.smtp_send_mail(email)
         return_data = {
             "success": True,
             "status" : 200,
-            "chekc":"you see me if successful"
+            "message":"you see me if successful"
         }
     except Exception as e:
         return_data = {
