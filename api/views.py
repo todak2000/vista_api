@@ -1108,6 +1108,10 @@ def special_service_update_sp(request):
         sp_data.engaged = True
         sp_data.save()
 
+        updateEscrow = Escrow.objects.get(job_id=job_id)
+        updateEscrow.sp_id =sp_data.user_id
+        updateEscrow.save()
+
         if jobDetails:
             client_data = User.objects.get(user_id=jobDetails.client_id)
             # Send mail using SMTP (client)
@@ -1759,7 +1763,44 @@ def artisans(request):
             "message": str(e)
         }
     return Response(return_data)
+# {"success":true,"status":200,"message":"Successfull","user_id":"SP7296",
+#     "userServices":[{"sp_id":"SP7296","client_id":"CT8361","job_id":185,
 
+#     "isTaken":true,"service_type":"Carpentry","isRejectedSP":false,"isCompleted":false,
+#     "isSpecialRequest":true,"hasPaid":true,"date_added":"2022-04-17T09:43:29.814759Z"
+#     },
+#     {"sp_id":"SP7296","client_id":"CT8361","job_id":184,
+#     "isTaken":true,"service_type":"Carpentry","isRejectedSP":false,"isCompleted":true,
+#     "isSpecialRequest":true,"hasPaid":true,"date_added":"2022-04-16T18:00:25.681786Z"
+#     }]}
+@api_view(["GET"])
+def special_request_notification_sp(request, email):
+    sp = User.objects.get(email=email)
+    if sp:
+    # if sp.user_online == True:
+        check = Services.objects.filter(sp_id=sp.user_id,isTaken=True, isCompleted=False, isRejectedSP=False, isDirectedToAdmin=True,amount__isnull=False)
+        # if len(check) >= 1:
+        if len(check) == 1:
+            return_data = {
+            "success": True,
+            "status" : 200,
+            "check": len(check),
+            "message": "You have a new request"
+            }
+        else:
+            return_data = {
+            "success": False,
+            "status" : 202,
+            "check": len(check),
+            "message": "No Notification"
+            }
+    else:
+        return_data = {
+        "success": False,
+        "status" : 202,
+        "message": "User does not exist"
+        }
+    return Response(return_data)
 @api_view(["GET"])
 def notification(request, email):
     sp = User.objects.get(email=email)
