@@ -1,3 +1,4 @@
+from turtle import update
 from django.shortcuts import render
 import datetime
 import json
@@ -1434,6 +1435,9 @@ def client_confirm(request):
         updateService = Services.objects.get(id=int(job_id))
         updateService.isCompleted = True
         updateService.save()
+        updateEscrow = Escrow.objects.get(job_id=int(job_id))
+        updateEscrow.isPaid = True
+        updateEscrow.save()
 
         sp_data = User.objects.get(user_id=sp_id)
         sp_data.engaged = False
