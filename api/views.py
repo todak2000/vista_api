@@ -1,4 +1,3 @@
-from turtle import update
 from django.shortcuts import render
 import datetime
 import json
