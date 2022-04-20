@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.fields import DateField
 from django.utils import timezone
 from cloudinary.models import CloudinaryField
+from django.db.models.deletion import CASCADE
 
 # Create your models here.
 class User(models.Model):
