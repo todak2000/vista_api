@@ -2687,11 +2687,11 @@ def all_commissions(request):
                 }
                 commissionsList.append(to_json)
         else:
-            commissionsList = ["There are no commissions in the database for now!."]
+            commissionsList = []
         return_data = {
             "success": True,
             "status" : 200,
-            "message": "Successfull",
+            "message": "There are no commissions in the database for now!.",
             "all_commissions": commissionsList,
         }
     except Exception as e:
