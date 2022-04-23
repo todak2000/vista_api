@@ -1101,13 +1101,13 @@ def special_service_update_sp(request):
         sp_data = User.objects.get(email=sp_email)
         
         jobDetails = Services.objects.get(id=int(job_id))
-        if jobDetails.sp_id == None or jobDetails.sp_id == "":
+        if jobDetails.amount == None or jobDetails.amount == "":
             return_data = {
                  "success": False,
                 "status" : 201,
-                "message": "Sorry, Kindly call/ confirm SP fees and update job amount before proceeding "
+                "message": "Sorry, Kindly call/ confirm SP fees and update amount before  proceeding"
             }
-        else:
+        elif jobDetails.amount != None or jobDetails.amount != "":
             jobDetails.sp_id = sp_data.user_id
             jobDetails.isTaken = True
             jobDetails.save()
