@@ -1101,49 +1101,56 @@ def special_service_update_sp(request):
         sp_data = User.objects.get(email=sp_email)
         
         jobDetails = Services.objects.get(id=int(job_id))
-        jobDetails.sp_id = sp_data.user_id
-        jobDetails.isTaken = True
-        jobDetails.save()
-
-        sp_data.engaged = True
-        sp_data.save()
-
-        updateEscrow = Escrow.objects.get(job_id=job_id)
-        updateEscrow.sp_id =sp_data.user_id
-        updateEscrow.save()
-
-        if jobDetails:
-            client_data = User.objects.get(user_id=jobDetails.client_id)
-            # Send mail using SMTP (client)
-            mail_subject = 'Hello '+str(client_data.firstname)+'! Your Special Service Request has been updated.'
-            email = {
-                'subject': mail_subject,
-                'html': '<h4>Hello, '+str(client_data.firstname)+'!</h4><p> Your service request for  the services of someone with '+str(jobDetails.service_type)+' skills has been approved and updated. A Service provider has been connected. Kindly login to your dashboard to accept the amount to be paid </p>',
-                'text': 'Hello, '+str(client_data.firstname)+'!\n Your service request for  the services of someone with '+str(jobDetails.service_type)+' skills has been approved and updated. A Service provider has been connected. Kindly login to your dashboard to accept the amount to be paid. ',
-                'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
-                'to': [
-                    {'name': client_data.firstname, 'email': client_data.email}
-                    # {'name': "MetaCraft Admin", 'email': "todak2000@gmail.com"}
-                ]
+        if jobDetails.sp_id == None or jobDetails.sp_id == "":
+            return_data = {
+                 "success": False,
+                "status" : 201,
+                "message": "Sorry, Kindly call/ confirm SP fees and update job amount before proceeding "
             }
-            SPApiProxy.smtp_send_mail(email)
-            # Send mail using SMTP (SP)
-            mail_subject = 'Hello '+str(sp_data.firstname)+'! You have a Service Request.'
-            email = {
-                'subject': mail_subject,
-                'html': '<h4>Hello, '+str(sp_data.firstname)+'!</h4><p> A client request for  '+str(jobDetails.service_type)+' skills has been approved and you have been assigned to do the job. Kindly login to accept Immediatey. Thanks</p>',
-                'text': 'Hello, '+str(sp_data.firstname)+'!\n A client request for  '+str(jobDetails.service_type)+' skills has been approved and you have been assigned to do the job. Kindly login to accept Immediatey. Thanks',
-                'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
-                'to': [
-                    {'name': sp_data.firstname, 'email': sp_data.email}
-                    # {'name': "MetaCraft Admin", 'email': "todak2000@gmail.com"}
-                ]
+        else:
+            jobDetails.sp_id = sp_data.user_id
+            jobDetails.isTaken = True
+            jobDetails.save()
+
+            sp_data.engaged = True
+            sp_data.save()
+
+            updateEscrow = Escrow.objects.get(job_id=job_id)
+            updateEscrow.sp_id =sp_data.user_id
+            updateEscrow.save()
+
+            if jobDetails:
+                client_data = User.objects.get(user_id=jobDetails.client_id)
+                # Send mail using SMTP (client)
+                mail_subject = 'Hello '+str(client_data.firstname)+'! Your Special Service Request has been updated.'
+                email = {
+                    'subject': mail_subject,
+                    'html': '<h4>Hello, '+str(client_data.firstname)+'!</h4><p> Your service request for  the services of someone with '+str(jobDetails.service_type)+' skills has been approved and updated. A Service provider has been connected. Kindly login to your dashboard to accept the amount to be paid </p>',
+                    'text': 'Hello, '+str(client_data.firstname)+'!\n Your service request for  the services of someone with '+str(jobDetails.service_type)+' skills has been approved and updated. A Service provider has been connected. Kindly login to your dashboard to accept the amount to be paid. ',
+                    'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
+                    'to': [
+                        {'name': client_data.firstname, 'email': client_data.email}
+                        # {'name': "MetaCraft Admin", 'email': "todak2000@gmail.com"}
+                    ]
+                }
+                SPApiProxy.smtp_send_mail(email)
+                # Send mail using SMTP (SP)
+                mail_subject = 'Hello '+str(sp_data.firstname)+'! You have a Service Request.'
+                email = {
+                    'subject': mail_subject,
+                    'html': '<h4>Hello, '+str(sp_data.firstname)+'!</h4><p> A client request for  '+str(jobDetails.service_type)+' skills has been approved and you have been assigned to do the job. Kindly login to accept Immediatey. Thanks</p>',
+                    'text': 'Hello, '+str(sp_data.firstname)+'!\n A client request for  '+str(jobDetails.service_type)+' skills has been approved and you have been assigned to do the job. Kindly login to accept Immediatey. Thanks',
+                    'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
+                    'to': [
+                        {'name': sp_data.firstname, 'email': sp_data.email}
+                        # {'name': "MetaCraft Admin", 'email': "todak2000@gmail.com"}
+                    ]
+                }
+                SPApiProxy.smtp_send_mail(email)
+            return_data = {
+                "success": True,
+                "status" : 200,
             }
-            SPApiProxy.smtp_send_mail(email)
-        return_data = {
-            "success": True,
-            "status" : 200,
-        }
     except Exception as e:
         return_data = {
             "success": False,
@@ -1440,6 +1447,7 @@ def client_confirm(request):
 
         sp_data = User.objects.get(user_id=sp_id)
         sp_data.engaged = False
+        sp_data.save()
         newRatings = (sp_data.ratings + float(ratings))/2
         sp_data.ratings = newRatings
         sp_data.save()
