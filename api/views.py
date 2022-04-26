@@ -1622,6 +1622,7 @@ def complete_job(request):
         updateService = Services.objects.get(id=int(job_id))
        
         client_data = User.objects.get(user_id=updateService.client_id)
+        sp_data = User.objects.get(user_id=sp_id)
         # Send mail using SMTP
         mail_subject = client_data.firstname+'! MetaCraft Job/Service Update'
         email = {
@@ -1634,6 +1635,18 @@ def complete_job(request):
             ]
         }
         SPApiProxy.smtp_send_mail(email)
+        # Send admin mail using SMTP
+        mail_subject2 = 'Admin! MetaCraft Job/Service Update'
+        email2 = {
+            'subject': mail_subject2,
+            'html': '<h4>Hello, Admin!</h4><p> '+sp_data.firstname+' just confirmed he/she has completed a job with id:'+job_id+'. Kindly log on to the MetaCraft app to confirm. Thanks</p>',
+            'text': 'Hello, Admin!\n '+sp_data.firstname+' just confirmed he/she has completed a job with id:'+job_id+'. Kindly log on to the MetaCraft app to confirm. Thanks',
+            'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
+            'to': [
+                {'name': "MetaCraft Admin", 'email': "achykieobianwu@gmail.com"}
+            ]
+        }
+        SPApiProxy.smtp_send_mail(email2)
         return_data = {
             "success": True,
             "status" : 200,
