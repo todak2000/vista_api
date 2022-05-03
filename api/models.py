@@ -155,3 +155,22 @@ class AdminUser(models.Model):
     date_added = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return f"{self.user_id} -{self.email} - {self.role}- {self.firstname}"
+
+
+class PaymentRequest(models.Model):
+    class Meta:
+        db_table = "Withdrwala or Payment request_table"
+    name = models.CharField(max_length=500, verbose_name="Payee Name")
+    user_id = models.CharField(max_length=500, verbose_name="Payee ID")
+    message= models.TextField(max_length=500,verbose_name="Message", null=True)
+    amount = models.FloatField(max_length=1000,verbose_name="Amount Transacted",blank=True)
+    email = models.CharField(max_length=500,unique=False, verbose_name="Email", default="none")
+    # currency = models.CharField(max_length=3000, verbose_name="Currency", null=True)
+    # payment_type = models.CharField(max_length=500,unique=False, verbose_name="Fiat/Token", default="none")
+    paidByAdmin = models.BooleanField(default=False)
+    # paymentClient = models.CharField(max_length=1000, verbose_name="paymentClient", blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date Created")
+    # updated_at = models.DateTimeField(auto_now=True, verbose_name="Date Modified")
+    def __str__(self):
+        return f"{self.name} - {self.email} - {self.user_id} - {self.amount} - {self.created_at} "
+

@@ -76,4 +76,7 @@ urlpatterns = [
     path('api/v1/special_request_notification/<email>',views.special_request_notification),
     path('api/v1/special_request_notification_sp/<email>',views.special_request_notification_sp),
     path('api/v1/assign_sp_list/<job_id>',views.special_service_sp_list),
+
+    path('api/v1/admin_payment_requests',views.admin_payment_requests),
+    path('api/v1/admin_confirm_withdrawal',views.admin_confirm_withdrawal),
 ]

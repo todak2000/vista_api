@@ -4,7 +4,7 @@ import json
 import requests
 import jwt
 from django.db.models import Q, Sum
-from api.models import (AdminUser, Gallery, User, VerificationDocuments, otp, Transaction, Escrow, Services, ServiceCategory)
+from api.models import (AdminUser, Gallery, PaymentRequest, User, VerificationDocuments, otp, Transaction, Escrow, Services, ServiceCategory)
 from CustomCode import (autentication, password_functions,
                         string_generator, validator, distance)
 # from django.db.models import Sum
@@ -807,7 +807,9 @@ def withdrawal(request):
 
         newTransaction = Transaction(from_id=user_data.user_id, to_id="MetaCraft", transaction_type="Debit", transaction_message="Withdrawal - Cashout", amount=float(amount))
         newTransaction.save()
-        if user_data and newTransaction:
+        withdrawal_data = PaymentRequest(name=str(user_data.firstname)+" "+str(user_data.lastname), email=user_data.email, user_id=user_data.user_id, amount=float(amount),message="Withdrawal from Wallet")
+        withdrawal_data.save()
+        if user_data and newTransaction and withdrawal_data:
             # Send mail using SMTP
             mail_subject = user_data.firstname+'! MetaCraft Withdrawal Update'
             email = {
@@ -820,6 +822,18 @@ def withdrawal(request):
                 ]
             }
             SPApiProxy.smtp_send_mail(email)
+            # mail to admin
+            mail_subject2 = 'Admin! MetaCraft Withdrawal Update'
+            email2 = {
+                'subject': mail_subject2,
+                'html': '<h4>Hello, '+user_data.firstname+'!</h4><p> has made a Withdrawal request for NGN'+amount+ '. Kindly complete the request within 24 hours. Thanks</p>',
+                'text': 'Hello, '+user_data.firstname+'!\n has made a Withdrawal request for NGN'+amount+ '. Kindly complete the request within 24 hours. Thanks',
+                'from': {'name': 'MetaCraft Fix', 'email': 'donotreply@wastecoin.co'},
+                'to': [
+                    {'name': "MetaCraft Admin", 'email': "achykieobianwu@gmail.com"}
+                ]
+            }
+            SPApiProxy.smtp_send_mail(email2)
             return_data = {
                 "success": True,
                 "status" : 200,
@@ -2778,6 +2792,220 @@ def special_service_sp_list(request, job_id):
         return_data = {
             "success": False,
             "status" : 201,
+            "message": str(e)
+        }
+    return Response(return_data)
+
+@api_view(["GET"])
+def ku(request):
+
+    try:
+        data = jwt.decode(token,settings.SECRET_KEY, algorithms=['HS256'])
+        admin_email = data['email']
+        admin_role = data["role"]
+        if admin_email != None and admin_email != '':
+            #get user info
+            admin_data = QuidrooAdmin.objects.get(email=admin_email)
+            totalCommissions = Invoice.objects.filter(invoice_state=2).aggregate(Sum('commission'))
+            totalInvoiceAmount = Invoice.objects.exclude(invoice_state=4).aggregate(Sum('invoice_amount'))
+            totalBalancesNG = Wallet.objects.all().aggregate(Sum('balanceNG'))
+            totalBalancesUSD = Wallet.objects.all().aggregate(Sum('balance'))
+            # payment request
+            p_requests = PaymentRequest.objects.filter(paidByQuidroo=False).order_by('-created_at')
+            p_confirmation = PaymentUpload.objects.filter(paymentConfirmed=False).order_by('-created_at')
+            p_transaction = Transaction.objects.all()
+            requestsList = []
+            num = len(p_requests)
+            for i in range(0,num):
+                created_at = p_requests[i].created_at
+                request_id = p_requests[i].id
+                payee_id = p_requests[i].user_id
+                name  = p_requests[i].name
+                amount  = p_requests[i].amount 
+                to_json = {
+                    "request_id":request_id,
+                    "payee_name": name,
+                    "amount": amount,
+                    "date": created_at,
+                    "payee_id": payee_id,
+                }
+                requestsList.append(to_json)
+            
+            # confirmation list
+            confirmationList = []
+            num2 = len(p_confirmation)
+            for i in range(0,num2):
+                created_at = p_confirmation[i].created_at
+                confirmation_id = p_confirmation[i].id #hidden
+                vendor_id = Vendor.objects.get(email=p_confirmation[i].vendor_email).user_id #hidden
+                vendor_name  = p_confirmation[i].vendor_name
+                invoice_name = p_confirmation[i].invoice_name
+                invoice_id = p_confirmation[i].invoice_id #hidden
+                invoice_amount = p_confirmation[i].invoice_amount
+                payment_url  = p_confirmation[i].payment_url #hidden
+                to_json = {
+                    "confirmation_id":confirmation_id,
+                    "vendor_id": vendor_id,
+                    "vendor_name": vendor_name,
+                    "date": created_at,
+                    "invoice_name": invoice_name,
+
+                    "invoice_id": invoice_id,
+                    "invoice_amount": invoice_amount,
+                    "payment_url": payment_url,
+                }
+                confirmationList.append(to_json)
+            
+            # transaction list
+            transactionList = []
+            num3 = len(p_transaction)
+            for i in range(0,num3):
+                created_at = p_transaction[i].created_at
+                transaction_id = p_transaction[i].id
+                sender_id = p_transaction[i].sender_id
+                if sender_id[:2] == "Qu":
+                    sender_name = sender_id
+                elif sender_id[:2] == "QS": 
+                    sender_name = Seller.objects.get(user_id=sender_id).name
+                    user_id = sender_id
+                elif sender_id[:2] == "QV": 
+                    sender_name = Vendor.objects.get(user_id=sender_id).name
+                    user_id = sender_id
+                elif sender_id[:2] == "QI": 
+                    sender_name = str(Investor.objects.get(user_id=sender_id).firstname)+" "+str(Investor.objects.get(user_id=sender_id).lastname)
+                    user_id = sender_id
+                
+
+                receiver_id = p_transaction[i].receiver_id
+                if receiver_id[:2] == "Qu":
+                    receiver_name = receiver_id
+                elif receiver_id[:2] == "QS": 
+                    receiver_name = Seller.objects.get(user_id=receiver_id).name
+                    user_id = receiver_id
+                elif receiver_id[:2] == "QV": 
+                    receiver_name = Vendor.objects.get(user_id=receiver_id).name
+                    user_id = receiver_id
+                elif receiver_id[:2] == "QI": 
+                    receiver_name =str(Investor.objects.get(user_id=receiver_id).firstname)+" "+str(Investor.objects.get(user_id=receiver_id).lastname)
+                    user_id = receiver_id
+           
+                transaction_type  = p_transaction[i].transaction_type
+                amount  = p_transaction[i].amount 
+                transaction_note = p_transaction[i].transaction_note
+                tx_ref =p_transaction[i].tx_hash
+                currency =p_transaction[i].currency
+                to_json = {
+                    "transaction_id":transaction_id,
+                    "tx_ref":tx_ref,
+                    "sender_name": sender_name,
+                    "receiver_name":receiver_name,
+                    "amount": amount,
+                    "date": created_at,
+                    "user_id":user_id,
+                    "currency":currency,
+                    "transaction_type": transaction_type,
+                    "transaction_note":transaction_note,
+
+                }
+                transactionList.append(to_json)
+            return_data = {
+                "success": True,
+                "status" : 200,
+                "message": "Successfull",
+                "totalCommissions":totalCommissions["commission__sum"],
+                "totalInvoiceAmount":totalInvoiceAmount["invoice_amount__sum"],
+                "totalBalancesNG":totalBalancesNG["balanceNG__sum"],
+                "totalBalancesUSD":totalBalancesUSD["balance__sum"],
+
+                "payment_requests": requestsList,
+                "payment_confirmations": confirmationList,
+                "payment_transactions": transactionList,
+            }
+        else:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": "Invalid Parameter"
+            }
+        
+        
+    except Exception as e:
+        return_data = {
+        "success": False,
+        "status" : 202,
+        "message" : str(e)
+    }
+
+    return Response(return_data)
+
+@api_view(["GET"])
+def admin_payment_requests(request):
+    try:
+        p_requests = PaymentRequest.objects.filter(paidByAdmin=False).order_by('-created_at')
+        requestsList = []
+        num = len(p_requests)
+        for i in range(0,num):
+            created_at = p_requests[i].created_at
+            request_id = p_requests[i].id
+            payee_id = p_requests[i].user_id
+            name  = p_requests[i].name
+            amount  = p_requests[i].amount 
+            email  = p_requests[i].email 
+            isPaid = p_requests[i].paidByAdmin
+            to_json = {
+                "request_id":request_id,
+                "payee_name": name,
+                "amount": amount,
+                "date": created_at,
+                "payee_id": payee_id,
+                "email":email,
+                "isPaid":isPaid
+            }
+            requestsList.append(to_json)
+        return_data = {
+            "success": True,
+            "status" : 200,
+            "message": "Successfull",
+            "payment_requests": requestsList,
+        }
+        
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 202,
+            "message": str(e)
+            # "message": 'Sorry, Something went wrong!'
+        }
+    return Response(return_data)
+
+@api_view(["POST"])
+def admin_confirm_withdrawal(request):
+    
+    try:
+        request_id = request.data.get("request_id",None)
+        if request_id != "" or request_id != None:
+            if PaymentRequest.objects.filter(id =request_id).exists():
+                request_data = PaymentRequest.objects.get(id=request_id) 
+                request_data.paidByAdmin = True
+                request_data.save()
+            
+            if request_data:
+                return_data = {
+                    "success": True,
+                    "status" : 200,
+                    "paid":request_data.paidByAdmin,
+                    "message": str(request_data.name)+" withdrawal is confirmed successfully" 
+                }
+        else:
+            return_data = {
+                "success": False,
+                "status" : 201,
+                "message": "User does not exist"
+            }
+    except Exception as e:
+        return_data = {
+            "success": False,
+            "status" : 202,
             "message": str(e)
         }
     return Response(return_data)
