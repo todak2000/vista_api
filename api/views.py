@@ -1498,13 +1498,16 @@ def client_confirm(request):
             sp_data2 = User.objects.get(user_id=sp_id)
             sp_data2.owingVistaCommission = True
             sp_data2.save()
-            com = updateService.amount* 0.9
+            com = updateService.amount* 0.1
+            newSPBalance = sp_data.walletBalance - com
+            sp_data.walletBalance = newSPBalance
+            sp_data.save()
             # Send mail using SMTP
             mail_subject = sp_data.firstname+'! MetaCraft Job/Service Update'
             email = {
                 'subject': mail_subject,
-                'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have confirmed the Job Completion and you have collected the cash of sum of NGN'+str(updateService.amount)+'. Admin will reach out figure out collection of our commision of '+str(com)+' from you. Your cooperation is highly appreciated as until you do the needful, you wont be able to get another request. Thanks.</p>',
-                'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+str(updateService.amount)+'. Admin will reach out figure out collection of our commision of '+str(com)+' from you. Your cooperation is highly appreciated as until you do the needful, you wont be able to get another request. Thanks',
+                'html': '<h4>Hello, '+sp_data.firstname+'!</h4><p> Be kindly informed that the client have confirmed the Job Completion and you have collected the cash of sum of NGN'+str(updateService.amount)+'. The sum of '+str(com)+' has been deducted from your account. Kindly deposit that eaxct amount into your wallet to offset your debt. Your cooperation is highly appreciated. You wont be able to get another request until your debt is cleared. Thanks.</p>',
+                'text': 'Hello, '+sp_data.firstname+'!\n Be kindly informed that the client have confirmed the Job Completion and you have been credited with the sum of NGN'+str(updateService.amount)+'. The sum of '+str(com)+' has been deducted from your account. Kindly deposit that eaxct amount into your wallet to offset your debt. Your cooperation is highly appreciated. You wont be able to get another request until your debt is cleared. Thanks.',
                 'from': {'name': 'MetaCraft', 'email': 'donotreply@wastecoin.co'},
                 'to': [
                     {'name': sp_data.firstname, 'email': sp_data.email}
@@ -2980,7 +2983,6 @@ def admin_payment_requests(request):
 
 @api_view(["POST"])
 def admin_confirm_withdrawal(request):
-    
     try:
         request_id = request.data.get("request_id",None)
         if request_id != "" or request_id != None:
